@@ -1,5 +1,5 @@
 ---
-// miku114514.vercel.app - 个人导航页
+// miku114514.vercel.app - 极致美化版
 const title = "Miku's Space";
 ---
 
@@ -9,117 +9,152 @@ const title = "Miku's Space";
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title}</title>
   <style>
-    /* 1. 全局样式 - 纯净白色主题 */
     :root {
-      --bg-color: #fcfcfc;
+      --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
       --text-main: #1d1d1f;
-      --text-sub: #86868b;
-      --card-bg: #ffffff;
-      --card-shadow: rgba(0, 0, 0, 0.04);
-      --accent: #0071e3; /* 经典蓝色，你也可以改成初音绿 #00cfb5 */
+      --text-sub: #6e6e73;
+      --accent-blue: #007aff;
+      --glass: rgba(255, 255, 255, 0.7);
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
     
     body { 
-      background-color: var(--bg-color);
+      background: var(--bg-gradient);
       color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.5;
-      overflow-x: hidden;
+      font-family: "SF Pro Display", "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      min-height: 200vh; /* 确保有足够的滚动空间展示右下角 */
     }
 
-    /* 2. 第一屏：震撼大标题 */
+    /* 背景流光动画 */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at 50% 50%, rgba(0,122,255,0.02) 0%, transparent 50%);
+      z-index: -1;
+      animation: fluid 20s infinite alternate;
+    }
+
+    @keyframes fluid {
+      0% { transform: translate(-5%, -5%) scale(1); }
+      100% { transform: translate(5%, 5%) scale(1.1); }
+    }
+
+    /* 第一屏：大标题 */
     .hero {
       height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      text-align: center;
-      padding: 0 20px;
+      perspective: 1000px;
     }
 
     .hero h1 {
-      font-size: clamp(3rem, 10vw, 6rem); /* 响应式字体大小 */
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 20px;
-      color: var(--text-main);
+      font-size: clamp(3.5rem, 12vw, 7rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: linear-gradient(180deg, #1d1d1f 0%, #434343 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: fadeInDown 1.2s cubic-bezier(0.2, 0, 0.2, 1);
     }
 
-    .hero p {
-      font-size: 1.2rem;
-      color: var(--text-sub);
-      font-weight: 400;
-    }
-
-    .scroll-down {
-      position: absolute;
-      bottom: 40px;
-      font-size: 14px;
-      color: var(--text-sub);
-      animation: bounce 2s infinite;
-    }
-
-    /* 3. 第二屏：按钮列表 */
+    /* 第二屏：容器 */
     .container {
-      max-width: 600px;
+      max-width: 640px;
       margin: 0 auto;
-      padding: 100px 20px;
+      padding: 0 24px 200px 24px;
     }
 
-    .section-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-sub);
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .nav-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    .nav-list { display: flex; flex-direction: column; gap: 20px; }
 
     .nav-item {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 22px;
-      background: var(--card-bg);
-      border: 1px solid #efefef;
-      border-radius: 18px;
+      justify-content: space-between;
+      padding: 24px 32px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,0,0,0.05);
+      border-radius: 24px;
       text-decoration: none;
       color: var(--text-main);
-      font-weight: 500;
-      font-size: 17px;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 6px var(--card-shadow);
+      font-weight: 600;
+      font-size: 18px;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .nav-item:hover {
-      transform: scale(1.02);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-      border-color: var(--accent);
-      color: var(--accent);
+      transform: translateY(-8px) scale(1.01);
+      background: #ffffff;
+      border-color: rgba(0,0,0,0.1);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
     }
 
-    /* 平台微调 - 悬浮时的品牌色（可选） */
-    .bilibili:hover { color: #fb7299; border-color: #fb7299; }
-    .luogu:hover { color: #3498db; border-color: #3498db; }
-    .github:hover { color: #24292e; border-color: #24292e; }
-
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-      40% {transform: translateY(-8px);}
-      60% {transform: translateY(-4px);}
+    .nav-item::after {
+      content: "→";
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
     }
 
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 3.5rem; }
+    .nav-item:hover::after {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* 右下角邮箱区 */
+    .contact-card {
+      position: fixed;
+      right: 30px;
+      bottom: 30px;
+      padding: 24px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      z-index: 100;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    /* 只有当页面滚动到底部附近时才显示 */
+    body.is-bottom .contact-card {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .contact-card h3 {
+      font-size: 12px;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .email-link {
+      display: block;
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 14px;
+      margin: 8px 0;
+      font-family: monospace;
+      transition: color 0.3s;
+    }
+
+    .email-link:hover { color: var(--accent-blue); }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -127,31 +162,42 @@ const title = "Miku's Space";
 
   <section class="hero">
     <h1>{title}</h1>
-    <p>Code, Algorithm & Life.</p>
-    <div class="scroll-down">滚动探索 ↓</div>
+    <p style="color: var(--text-sub); margin-top: 10px;">Algorithm & Development</p>
   </section>
 
   <div class="container">
-    <p class="section-title">Social Connect</p>
-    
     <div class="nav-list">
-      <a href="https://github.com/TQSY114514" class="nav-item github" target="_blank">GitHub</a>
-      
-      <a href="https://luogu.com.cn/user/1849345" class="nav-item luogu" target="_blank">Luogu</a>
-      
-      <a href="https://space.bilibili.com/1180124107" class="nav-item bilibili" target="_blank">Bilibili</a>
-      
+      <a href="https://github.com/TQSY114514" class="nav-item" target="_blank">GitHub</a>
+      <a href="https://luogu.com.cn/user/1849345" class="nav-item" target="_blank">Luogu</a>
+      <a href="https://space.bilibili.com/1180124107" class="nav-item" target="_blank">Bilibili</a>
       <a href="https://x.com/TianY43737" class="nav-item" target="_blank">X (Twitter)</a>
-      
       <a href="https://www.instagram.com/tqsy114514/" class="nav-item" target="_blank">Instagram</a>
-      
       <a href="https://www.facebook.com/profile.php?id=61577768467133" class="nav-item" target="_blank">Facebook</a>
     </div>
-
-    <footer style="margin-top: 80px; text-align: center; color: #bbb; font-size: 12px;">
-      © 2026 {title}. Built with Astro & Vercel.
-    </footer>
   </div>
 
+  <div class="contact-card" id="contactCard">
+    <h3>Contact Me</h3>
+    <a href="mailto:tqishengyan@gmail.com" class="email-link">tqishengyan@gmail.com</a>
+    <a href="mailto:3635316905@qq.com" class="email-link">3635316905@qq.com</a>
+    <a href="mailto:tianqishengyan_zhj@163.com" class="email-link">tianqishengyan_zhj@163.com</a>
+    <a href="mailto:tianqishengyan_zhj@outlook.com" class="email-link">tianqishengyan_zhj@outlook.com</a>
+  </div>
+
+  <script>
+    // 检测是否滚动到底部的逻辑
+    window.addEventListener('scroll', () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      const clientHeight = document.documentElement.clientHeight;
+
+      // 如果距离底部小于 100px
+      if (scrollTop + clientHeight >= scrollHeight - 100) {
+        document.body.classList.add('is-bottom');
+      } else {
+        document.body.classList.remove('is-bottom');
+      }
+    });
+  </script>
 </body>
 </html>
