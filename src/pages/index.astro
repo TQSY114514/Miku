@@ -1,124 +1,213 @@
 ---
-// TQSY's Space - 完整兼容版
+// TQSY's Space - 细节微调版 (移动端布局间距优化)
 const title = "TQSY's Space";
-const mikuCover = "https://phototourl.com/i/2024/10/26/671cd6c0850df.jpg";
-const mikuAudio = "https://videotourl.com/u/2024/10/26/671cd72225345.mp3";
 ---
 
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>{title}</title>
-    <style>
-      /* 基础重置，防止边距撑开页面 */
-      * {
-        box-sizing: border-box;
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>{title}</title>
+  <style>
+    :root {
+      --miku-green: #00cfb5;
+      --bg-white: #fcfcfc;
+      --text-dark: #1d1d1f;
+      --text-gray: #86868b;
+      --glass: rgba(255, 255, 255, 0.85);
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    
+    body { 
+      background-color: var(--bg-white); 
+      color: var(--text-dark); 
+      font-family: -apple-system, system-ui, sans-serif; 
+      overflow-x: hidden;
+      opacity: 0;
+      animation: fadeInBody 1.5s var(--ease) forwards;
+    }
+
+    .bg-glow { 
+      position: fixed; 
+      top: 0; left: 0; 
+      width: 100vw; height: 100vh; 
+      background: radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.05) 0%, transparent 40%); 
+      z-index: -1; 
+    }
+
+    .hero { 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      align-items: center; 
+      animation: heroUp 1.2s var(--ease) 0.2s both;
+    }
+    .hero h1 { 
+      font-size: clamp(2.5rem, 8vw, 6rem); /* 缩小了手机端的基础字号 */
+      font-weight: 800; 
+      background: linear-gradient(#1d1d1f, #86868b); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      filter: blur(10px);
+      animation: unblur 1.2s var(--ease) 0.3s both;
+    }
+    .hero-sub { 
+      color: var(--text-gray); 
+      letter-spacing: 0.3em; 
+      text-transform: uppercase; 
+      font-size: 0.7rem; 
+      margin-top: 10px; 
+      opacity: 0;
+      animation: fadeIn 1s var(--ease) 0.8s forwards;
+    }
+
+    .container { max-width: 500px; margin: 0 auto; padding: 0 20px 250px 20px; }
+    .nav-item { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      padding: 18px 24px; /* 稍微收紧一点间距 */
+      background: var(--glass); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid rgba(0,0,0,0.05); 
+      border-radius: 20px; 
+      text-decoration: none; 
+      color: var(--text-dark); 
+      font-weight: 600; 
+      margin-bottom: 12px; 
+      transition: 0.4s var(--ease);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .nav-item:hover { transform: translateY(-4px); color: var(--miku-green); border-color: var(--miku-green); }
+
+    /* 播放器卡片 */
+    .player-card { 
+      position: fixed; 
+      left: 25px; bottom: 25px; 
+      width: 280px; padding: 10px; 
+      background: var(--glass); 
+      backdrop-filter: blur(25px); 
+      border-radius: 18px; 
+      border: 1px solid rgba(0,207,181,0.2); 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
+      z-index: 1000; 
+      opacity: 0;
+      animation: slideInLeft 1.2s var(--ease) 1s forwards;
+    }
+    .album-cover { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; transition: 0.3s; }
+    .is-playing .album-cover { box-shadow: 0 0 15px rgba(0,207,181,0.3); transform: scale(1.05); }
+
+    .song-info { flex: 1; overflow: hidden; }
+    .song-name { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-artist { font-size: 10px; color: var(--miku-green); }
+    .play-pause { width: 32px; height: 32px; background: var(--text-dark); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    /* 联系面板 */
+    .contact-panel { position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; opacity: 0; transform: translateY(20px); transition: 0.6s var(--ease); pointer-events: none; z-index: 1001; }
+    body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .email-chip { background: white; padding: 6px 14px; border-radius: 50px; font-size: 10px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
+    .email-chip:hover { background: var(--miku-green); color: white; transform: translateX(-5px); }
+
+    /* 📱 移动端深度优化 */
+    @media (max-width: 600px) {
+      .player-card { 
+        width: 180px; /* 手机端显著缩小宽度 */
+        left: 15px; bottom: 15px; 
+        padding: 8px;
+        gap: 8px;
       }
+      .album-cover { width: 35px; height: 35px; }
+      .song-name { font-size: 10px; }
+      .play-pause { width: 28px; height: 28px; font-size: 10px; }
 
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'PingFang SC', sans-serif;
-        background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow-x: hidden; /* 防止左右晃动 */
-      }
+      /* 避免邮箱和播放器重叠，把邮箱面板往上挪 */
+      .contact-panel { right: 15px; bottom: 85px; align-items: flex-end; } 
+      .email-chip { padding: 5px 10px; font-size: 8.5px; }
+    }
 
-      /* 电脑端主卡片 */
-      .main-card {
-        text-align: center;
-        background: rgba(255, 255, 255, 0.75);
-        padding: 40px;
-        border-radius: 30px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(12px);
-        width: 450px; /* 电脑端固定宽度 */
-        border: 1px solid rgba(255, 255, 255, 0.3);
-      }
+    @keyframes fadeInBody { to { opacity: 1; } }
+    @keyframes heroUp { from { transform: translateY(30px); } to { transform: translateY(0); } }
+    @keyframes unblur { to { filter: blur(0); } }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes navStagger { to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
 
-      h1 {
-        color: #00acc1;
-        font-size: 2.2rem;
-        margin-top: 0;
-        margin-bottom: 20px;
-      }
+  <div class="bg-glow"></div>
 
-      .album-cover {
-        width: 320px;
-        height: 320px;
-        object-fit: cover;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        margin-bottom: 25px;
-      }
+  <section class="hero">
+    <h1>{title}</h1>
+    <p class="hero-sub">Weather Holy Salt · TQSY</p>
+  </section>
 
-      .audio-wrapper {
-        width: 100%;
-      }
-
-      audio {
-        width: 100%;
-        height: 45px;
-      }
-
-      .footer {
-        margin-top: 25px;
-        color: #666;
-        font-size: 14px;
-        opacity: 0.8;
-      }
-
-      /* --- 📱 手机端适配 (关键补丁) --- */
-      @media (max-width: 768px) {
-        .main-card {
-          width: 85% !important; /* 强制卡片宽度 */
-          padding: 20px !important; /* 缩小内边距 */
-          border-radius: 20px !important;
-        }
-
-        h1 {
-          font-size: 1.5rem !important; /* 缩小标题 */
-          margin-bottom: 15px !important;
-        }
-
-        .album-cover {
-          width: 160px !important; /* 封面图强制缩小一半以上 */
-          height: 160px !important;
-          margin-bottom: 15px !important;
-        }
-
-        audio {
-          height: 36px !important; /* 压扁播放器 */
-        }
-
-        .footer {
-          font-size: 12px !important;
-          margin-top: 15px !important;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="main-card">
-      <h1>{title}</h1>
-      
-      <img src={mikuCover} class="album-cover" alt="Miku" />
-      
-      <div class="audio-wrapper">
-        <p style="margin-bottom: 10px; font-size: 0.9rem; color: #555;">正在播放：橙交差点</p>
-        <audio controls>
-          <source src={mikuAudio} type="audio/mpeg" />
-          您的浏览器太旧啦
-        </audio>
-      </div>
-
-      <div class="footer">
-        TQSY · 2024 · 114514 Version
-      </div>
+  <div class="container">
+    <div class="nav-list" id="navList">
+      <a href="https://github.com/TQSY114514" class="nav-item"><span>GitHub</span> <span>→</span></a>
+      <a href="https://luogu.com.cn/user/1849345" class="nav-item"><span>Luogu</span> <span>→</span></a>
+      <a href="https://space.bilibili.com/1180124107" class="nav-item"><span>Bilibili</span> <span>→</span></a>
+      <a href="https://x.com/TianY43737" class="nav-item"><span>X (Twitter)</span> <span>→</span></a>
+      <a href="https://www.instagram.com/tqsy114514/" class="nav-item"><span>Instagram</span> <span>→</span></a>
+      <a href="https://www.facebook.com/profile.php?id=61577768467133" class="nav-item"><span>Facebook</span> <span>→</span></a>
     </div>
-  </body>
+  </div>
+
+  <div class="player-card" id="playerCard">
+    <img src="https://cdn.phototourl.com/free/2026-04-11-eee19110-0750-4557-be87-830a17b948b5.jpg" class="album-cover" alt="Miku Cover">
+    <div class="song-info">
+      <div class="song-name">橙交差点</div>
+      <div class="song-artist">初音ミク</div>
+    </div>
+    <button class="play-pause" id="playBtn">▶</button>
+    <audio id="mainAudio" loop preload="auto">
+      <source src="https://videotourl.com/audio/1775904309738-ed28bd2b-7261-4bb9-8cab-1ed6c1b5b0c9.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <div class="contact-panel">
+    <a href="mailto:tqishengyan@gmail.com" class="email-chip">tqishengyan@gmail.com</a>
+    <a href="mailto:3635316905@qq.com" class="email-chip">3635316905@qq.com</a>
+    <a href="mailto:tianqishengyan_zhj@163.com" class="email-chip">tianqishengyan_zhj@163.com</a>
+    <a href="mailto:tianqishengyan_zhj@outlook.com" class="email-chip">tianqishengyan_zhj@outlook.com</a>
+  </div>
+
+  <script is:inline>
+    const items = document.querySelectorAll('.nav-item');
+    items.forEach((item, index) => {
+      item.style.animation = `navStagger 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${0.5 + index * 0.1}s forwards`;
+    });
+
+    const audio = document.getElementById('mainAudio');
+    const playBtn = document.getElementById('playBtn');
+    const playerCard = document.getElementById('playerCard');
+
+    playBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (audio.paused) {
+        audio.play().then(() => {
+          playBtn.innerText = "⏸";
+          playerCard.classList.add('is-playing');
+        });
+      } else {
+        audio.pause();
+        playBtn.innerText = "▶";
+        playerCard.classList.remove('is-playing');
+      }
+    };
+
+    window.onscroll = () => {
+      // 稍微调敏锐一点，滚动到底部附近就显示联系方式
+      const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100;
+      document.body.classList.toggle('is-bottom', isBottom);
+    };
+  </script>
+</body>
 </html>
