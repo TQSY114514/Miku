@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - Final Victory Version
+// TQSY's Space - 最终复活版
 const title = "TQSY's Space";
 ---
 
@@ -26,7 +26,7 @@ const title = "TQSY's Space";
     .hero h1 { font-size: clamp(3rem, 10vw, 6rem); font-weight: 800; background: linear-gradient(#1d1d1f, #86868b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .hero-sub { color: var(--text-gray); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.8rem; margin-top: 10px; }
 
-    /* 社交列表 */
+    /* 社交链接 */
     .container { max-width: 500px; margin: 0 auto; padding-bottom: 250px; }
     .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; text-decoration: none; color: var(--text-dark); font-weight: 600; margin-bottom: 16px; transition: 0.4s; }
     .nav-item:hover { transform: scale(1.02) translateY(-4px); border-color: var(--miku-green); color: var(--miku-green); }
@@ -40,11 +40,11 @@ const title = "TQSY's Space";
     .song-artist { font-size: 11px; color: var(--text-gray); }
     .play-pause { width: 36px; height: 36px; background: var(--text-dark); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-    /* 联系面板 */
+    /* 联系面板 (已恢复) */
     .contact-panel { position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; opacity: 0; transform: translateY(20px); transition: 0.5s; pointer-events: none; }
     body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .email-chip { background: white; padding: 10px 18px; border-radius: 50px; font-size: 11px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
-    .email-chip:hover { background: var(--miku-green); color: white; }
+    .email-chip:hover { background: var(--miku-green); color: white; border-color: var(--miku-green); }
 
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
@@ -72,7 +72,7 @@ const title = "TQSY's Space";
   <div class="player-card" id="playerCard">
     <img src="https://img.moegirl.org.cn/common/thumb/b/b7/Miku_v3_visual.png/250px-Miku_v3_visual.png" class="album-cover">
     <div class="song-info">
-      <div class="song-name" id="sn">橙交差点</div>
+      <div class="song-name" id="snText">橙交差点</div>
       <div class="song-artist">初音ミク</div>
     </div>
     <button class="play-pause" id="playBtn">▶</button>
@@ -92,20 +92,19 @@ const title = "TQSY's Space";
     const audio = document.getElementById('mainAudio');
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
-    const sn = document.getElementById('sn');
+    const snText = document.getElementById('snText');
 
     playBtn.onclick = () => {
       if (audio.paused) {
-        // 尝试播放
         audio.play().then(() => {
           playBtn.innerText = "⏸";
           playerCard.classList.add('is-playing');
-          sn.innerText = "橙交差点";
+          snText.innerText = "橙交差点";
         }).catch(err => {
           console.error(err);
-          // 404 捕获
-          sn.innerText = "文件丢失(404)";
-          alert("点击了播放但 /miku.mp3 没响应。请确保 public 文件夹就在根目录，里面有 miku.mp3。");
+          snText.innerText = "文件解析失败(404)";
+          // 如果 404，我们尝试帮用户暴力重载
+          audio.src = "/miku.mp3?v=" + new Date().getTime(); 
         });
       } else {
         audio.pause();
