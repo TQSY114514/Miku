@@ -1,6 +1,6 @@
 ---
-// miku114514.vercel.app - The Masterpiece Edition
-const title = "Miku's Space";
+// TQSY's Space - Single Track Edition
+const title = "TQSY's Space";
 ---
 
 <html lang="zh-CN">
@@ -8,144 +8,79 @@ const title = "Miku's Space";
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title}</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
   <style>
-    /* 1. 核心定义：初音色与极简白 */
     :root {
       --miku-green: #00cfb5;
-      --bg-white: #f8f9fa;
+      --bg-white: #fcfcfc;
       --text-dark: #1d1d1f;
       --text-gray: #86868b;
-      --glass: rgba(255, 255, 255, 0.75);
+      --glass: rgba(255, 255, 255, 0.8);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-    
-    body { 
-      background: var(--bg-white);
-      color: var(--text-dark);
-      font-family: -apple-system, "SF Pro Display", "PingFang SC", sans-serif;
-      overflow-x: hidden;
-    }
+    body { background-color: var(--bg-white); color: var(--text-dark); font-family: -apple-system, system-ui, sans-serif; overflow-x: hidden; }
 
-    /* 背景动态光晕 */
+    /* 背景装饰：流光感 */
     .bg-glow {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: 
-        radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.05) 0%, transparent 40%),
-        radial-gradient(circle at 20% 80%, rgba(0, 113, 227, 0.05) 0%, transparent 40%);
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.04) 0%, transparent 40%);
       z-index: -1;
-      animation: pulse 10s infinite alternate ease-in-out;
     }
 
-    @keyframes pulse {
-      0% { opacity: 0.5; transform: scale(1); }
-      100% { opacity: 1; transform: scale(1.1); }
-    }
+    /* 标题区 */
+    .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .hero h1 { font-size: clamp(3.5rem, 12vw, 7rem); font-weight: 800; letter-spacing: -0.05em; background: linear-gradient(#1d1d1f, #86868b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { color: var(--text-gray); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.9rem; margin-top: 10px; }
 
-    /* 首页：震撼大标题 */
-    .hero {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-size: clamp(4rem, 15vw, 8rem);
-      font-weight: 800;
-      letter-spacing: -0.05em;
-      line-height: 1;
-      background: linear-gradient(to bottom, #1d1d1f, #86868b);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 24px;
-    }
-
-    .hero-sub {
-      font-size: 1.2rem;
-      color: var(--text-gray);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      font-weight: 300;
-      animation: fadeIn 2s ease;
-    }
-
-    /* 按钮列表区 */
-    .container {
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 0 24px 150px 24px;
-    }
-
-    .nav-list { display: flex; flex-direction: column; gap: 14px; }
-
+    /* 链接容器 */
+    .container { max-width: 500px; margin: 0 auto; padding-bottom: 200px; }
     .nav-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 28px;
-      background: var(--glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(0,0,0,0.03);
-      border-radius: 20px;
-      text-decoration: none;
-      color: var(--text-dark);
-      font-weight: 600;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 28px; background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,0,0,0.04); border-radius: 24px; text-decoration: none; color: var(--text-dark);
+      font-weight: 600; margin-bottom: 16px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .nav-item:hover { transform: scale(1.02) translateY(-4px); border-color: var(--miku-green); color: var(--miku-green); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+
+    /* --- 音乐播放器 --- */
+    .player-card {
+      position: fixed; left: 25px; bottom: 25px;
+      width: 260px; padding: 12px;
+      background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+      border-radius: 22px; border: 1px solid rgba(0,0,0,0.06);
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05); z-index: 1000;
     }
 
-    .nav-item:hover {
-      background: #ffffff;
-      border-color: var(--miku-green);
-      color: var(--miku-green);
-      transform: scale(1.03) translateY(-4px);
-      box-shadow: 0 15px 30px rgba(0, 207, 181, 0.1);
+    .album-cover {
+      width: 48px; height: 48px; border-radius: 10px;
+      object-fit: cover; background: #eee;
+      animation: rotate 12s linear infinite; animation-play-state: paused;
     }
+    .is-playing .album-cover { animation-play-state: running; }
 
-    /* 侧边隐藏的邮箱卡片 */
+    .song-info { flex: 1; overflow: hidden; }
+    .song-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+    .song-status { font-size: 10px; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .play-pause { 
+      width: 34px; height: 34px; background: var(--text-dark); color: white; border: none;
+      border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; 
+      font-size: 12px; transition: 0.3s;
+    }
+    .play-pause:hover { background: var(--miku-green); transform: scale(1.1); }
+
+    /* --- 右下角联系区 --- */
     .contact-panel {
-      position: fixed;
-      right: 30px;
-      bottom: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 10px;
-      opacity: 0;
-      transform: translateX(50px);
-      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 1000;
+      position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+      opacity: 0; transform: translateY(20px); transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none;
     }
+    body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .email-chip { background: white; padding: 10px 18px; border-radius: 50px; font-size: 12px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
+    .email-chip:hover { background: var(--miku-green); color: white; border-color: var(--miku-green); }
 
-    body.is-bottom .contact-panel {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .email-capsule {
-      background: white;
-      padding: 10px 20px;
-      border-radius: 50px;
-      font-size: 13px;
-      color: var(--text-gray);
-      border: 1px solid #eee;
-      text-decoration: none;
-      transition: all 0.3s;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      font-family: monospace;
-    }
-
-    .email-capsule:hover {
-      background: var(--miku-green);
-      color: white;
-      border-color: var(--miku-green);
-    }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -154,7 +89,7 @@ const title = "Miku's Space";
 
   <section class="hero">
     <h1>{title}</h1>
-    <p class="hero-sub">Algorithm · Development · Life</p>
+    <p class="hero-sub">Weather Holy Salt · TQSY</p>
   </section>
 
   <div class="container">
@@ -168,24 +103,98 @@ const title = "Miku's Space";
     </div>
   </div>
 
-  <div class="contact-panel" id="contactPanel">
-    <div style="font-size: 10px; color: #ccc; margin-right: 15px;">GET IN TOUCH</div>
-    <a href="mailto:tqishengyan@gmail.com" class="email-capsule">tqishengyan@gmail.com</a>
-    <a href="mailto:3635316905@qq.com" class="email-capsule">3635316905@qq.com</a>
-    <a href="mailto:tianqishengyan_zhj@163.com" class="email-capsule">tianqishengyan_zhj@163.com</a>
-    <a href="mailto:tianqishengyan_zhj@outlook.com" class="email-capsule">tianqishengyan_zhj@outlook.com</a>
+  <div class="player-card" id="playerCard">
+    <img src="" class="album-cover" id="cover" alt="Cover">
+    <div class="song-info">
+      <div class="song-name" id="songName">BGM Loading...</div>
+      <div class="song-status" id="songStatus">Paused</div>
+    </div>
+    <button class="play-pause" id="playBtn">▶</button>
+    <audio id="mainAudio" src="/miku.mp3" loop></audio>
   </div>
 
-  <script>
-    // 监听滚动，到底部才展示邮箱
-    window.addEventListener('scroll', () => {
-      const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50;
-      if (isBottom) {
-        document.body.classList.add('is-bottom');
-      } else {
-        document.body.classList.remove('is-bottom');
+  <div class="contact-panel">
+    <div style="font-size: 10px; color: #ccc; margin-right: 15px; margin-bottom: 5px;">CONTACT</div>
+    <a href="mailto:tqishengyan@gmail.com" class="email-chip">tqishengyan@gmail.com</a>
+    <a href="mailto:3635316905@qq.com" class="email-chip">3635316905@qq.com</a>
+    <a href="mailto:tianqishengyan_zhj@163.com" class="email-chip">tianqishengyan_zhj@163.com</a>
+    <a href="mailto:tianqishengyan_zhj@outlook.com" class="email-chip">tianqishengyan_zhj@outlook.com</a>
+  </div>
+
+ <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+
+<script is:inline>
+  // 使用匿名函数包裹，避免污染全局
+  (() => {
+    document.addEventListener('DOMContentLoaded', () => {
+      // 这里的 window.jsmediatags 强制断言，避开 TS 检查
+      const jsmediatags = window.jsmediatags;
+      const audio = document.getElementById('mainAudio');
+      const playBtn = document.getElementById('playBtn');
+      const songNameDisplay = document.getElementById('songName');
+      const songStatusDisplay = document.getElementById('songStatus');
+      const coverDisplay = document.getElementById('cover');
+      const playerCard = document.getElementById('playerCard');
+
+      // 严谨检查：如果这些元素任何一个不存在，就直接退出，不往下走
+      if (!audio || !playBtn || !songNameDisplay || !songStatusDisplay || !coverDisplay || !playerCard || !jsmediatags) {
+        console.warn("TQSY Player: Some elements are missing.");
+        return;
       }
+
+      function loadMetadata() {
+        const songUrl = audio.src;
+        // 如果没有设置文件名，或者 URL 不合法，跳过
+        if (!songUrl || songUrl.endsWith('.mp3') === false) return;
+
+        jsmediatags.read(songUrl, {
+          onSuccess: function(tag) {
+            const tags = tag.tags;
+            songNameDisplay.innerText = tags.title || "Unknown Track";
+            
+            const image = tags.picture;
+            if (image) {
+              let base64String = "";
+              for (let i = 0; i < image.data.length; i++) {
+                base64String += String.fromCharCode(image.data[i]);
+              }
+              const base64 = "data:" + image.format + ";base64," + window.btoa(base64String);
+              coverDisplay.src = base64;
+            } else {
+              coverDisplay.src = "https://via.placeholder.com/100?text=TQSY";
+            }
+          },
+          onError: function(err) {
+            console.error('Metadata error:', err);
+            // 发生错误时尝试从路径获取歌名
+            const fileName = songUrl.split('/').pop();
+            songNameDisplay.innerText = fileName ? decodeURI(fileName) : "BGM";
+            coverDisplay.src = "https://via.placeholder.com/100?text=Music";
+          }
+        });
+      }
+
+      playBtn.addEventListener('click', () => {
+        if (audio.paused) {
+          audio.play().catch(e => console.log("Playback interaction blocked"));
+          playBtn.innerText = "⏸";
+          songStatusDisplay.innerText = "Playing";
+          playerCard.classList.add('is-playing');
+        } else {
+          audio.pause();
+          playBtn.innerText = "▶";
+          songStatusDisplay.innerText = "Paused";
+          playerCard.classList.remove('is-playing');
+        }
+      });
+
+      loadMetadata();
     });
-  </script>
-</body>
-</html>
+
+    // 滚动监听
+    window.addEventListener('scroll', () => {
+      const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 80;
+      document.body.classList.toggle('is-bottom', isBottom);
+    });
+  })();
+</script>
