@@ -8,27 +8,6 @@ const title = "TQSY's Space";
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title}</title>
-  /* --- 只针对手机端的补丁，不影响电脑端 --- */
-  @media (max-width: 768px) {
-    /* 让你的封面图在手机上小一点，别把播放器挤下去 */
-    .album-cover { 
-      width: 200px !important; 
-      height: 200px !important; 
-      margin: 0 auto 15px !important;
-    }
-
-    /* 让音频播放器在手机上稍微缩放一下 */
-    audio {
-      transform: scale(0.9);
-      width: 100% !important;
-    }
-
-    /* 缩小标题，腾出垂直空间 */
-    h1 {
-      font-size: 1.6rem !important;
-      margin-top: 10px !important;
-    }
-  }
   <style>
     :root {
       --miku-green: #00cfb5;
@@ -150,6 +129,38 @@ const title = "TQSY's Space";
     @keyframes fadeIn { to { opacity: 1; } }
     @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes navStagger { to { opacity: 1; transform: translateY(0); } }
+  /* --- 手机端自动适配方案 --- */
+@media (max-width: 768px) {
+  /* 1. 让最外层的容器变窄，适配手机屏幕 */
+  .container, .main-card { 
+    width: 90% !important;
+    padding: 15px !important;
+  }
+
+  /* 2. 关键：缩小封面图，给播放器腾地方 */
+  .album-cover, img {
+    width: 180px !important; 
+    height: 180px !important;
+    margin: 0 auto 10px auto !important;
+  }
+
+  /* 3. 压扁播放器，让它不那么占位置 */
+  audio {
+    height: 35px !important;
+    transform: scale(0.9); /* 整体再缩小一点 */
+  }
+
+  /* 4. 调小标题文字 */
+  h1 {
+    font-size: 1.4rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* 5. 隐藏一些手机上没必要的装饰（如果有的话） */
+  .footer-text {
+    font-size: 12px !important;
+  }
+}
   </style>
 </head>
 <body>
