@@ -87,15 +87,14 @@ const title = "Miku's Space";
 
   <section class="hero-section">
     <h1 class="hero-title">{title}</h1>
-    <div class="scroll-indicator">下滑开启新世界 ↓</div>
+    <div class="scroll-indicator">下滑 ↓</div>
   </section>
 
   <section class="content-section">
-    <h2 style="margin-bottom: 40px; color: #888;">各大平台账号</h2>
+    <h2 style="margin-bottom: 40px; color: #888;">平台账号</h2>
     
-    <a href="https://github.com/你的账号" class="nav-button" target="_blank">GitHub</a>
-    <a href="https://space.bilibili.com/你的UID" class="nav-button" target="_blank">Bilibili</a>
-    <a href="#" class="nav-button">个人博客</a>
+    <a href="https://github.com/TQSY114514" class="nav-button" target="_blank">GitHub</a>
+    <a href="https://space.bilibili.com/1180124107" class="nav-button" target="_blank">Bilibili</a>
     <a href="#" class="nav-button">联系我</a>
   </section>
 
