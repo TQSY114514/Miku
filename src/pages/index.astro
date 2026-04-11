@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 移动端优化+自动播放逻辑版
+// TQSY's Space - 最终回归稳健版 (手动播放 + 细腻动效 + 移动端适配)
 const title = "TQSY's Space";
 ---
 
@@ -84,7 +84,7 @@ const title = "TQSY's Space";
     }
     .nav-item:hover { transform: translateY(-4px); color: var(--miku-green); border-color: var(--miku-green); }
 
-    /* 播放器卡片 - 移动端适配关键区 */
+    /* 播放器卡片 */
     .player-card { 
       position: fixed; 
       left: 25px; bottom: 25px; 
@@ -113,14 +113,12 @@ const title = "TQSY's Space";
     .contact-panel { position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; opacity: 0; transform: translateY(20px); transition: 0.6s var(--ease); pointer-events: none; z-index: 1001; }
     body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .email-chip { background: white; padding: 8px 16px; border-radius: 50px; font-size: 10px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
+    .email-chip:hover { background: var(--miku-green); color: white; transform: translateX(-5px); }
 
-    /* 📱 移动端小屏幕适配脚本 */
+    /* 📱 移动端适配 */
     @media (max-width: 600px) {
-      .player-card { width: 220px; left: 15px; bottom: 15px; padding: 8px; }
-      .album-cover { width: 40px; height: 40px; }
-      .song-name { font-size: 11px; }
-      .contact-panel { right: 15px; bottom: 85px; } /* 手机端邮箱上移，防止遮挡播放器 */
-      .email-chip { padding: 6px 12px; font-size: 9px; }
+      .player-card { width: 220px; left: 15px; bottom: 15px; }
+      .contact-panel { right: 15px; bottom: 85px; } /* 邮箱上移，不挡播放器 */
     }
 
     @keyframes fadeInBody { to { opacity: 1; } }
@@ -181,31 +179,19 @@ const title = "TQSY's Space";
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
 
-    // 状态切换函数
-    function togglePlay() {
+    playBtn.onclick = (e) => {
+      e.stopPropagation();
       if (audio.paused) {
         audio.play().then(() => {
           playBtn.innerText = "⏸";
           playerCard.classList.add('is-playing');
-        }).catch(e => console.log("自动播放被浏览器拦截，等待用户交互"));
+        });
       } else {
         audio.pause();
         playBtn.innerText = "▶";
         playerCard.classList.remove('is-playing');
       }
-    }
-
-    playBtn.onclick = (e) => {
-      e.stopPropagation();
-      togglePlay();
     };
-
-    // 🔊 自动播放逻辑：由于浏览器限制，只要用户点击页面任何地方，就开始播放
-    window.addEventListener('click', () => {
-      if (audio.paused) {
-        togglePlay();
-      }
-    }, { once: true }); // 只触发一次
 
     window.onscroll = () => {
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 150;
