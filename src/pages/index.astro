@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 细腻动效版
+// TQSY's Space - 移动端优化+自动播放逻辑版
 const title = "TQSY's Space";
 ---
 
@@ -15,7 +15,7 @@ const title = "TQSY's Space";
       --text-dark: #1d1d1f;
       --text-gray: #86868b;
       --glass: rgba(255, 255, 255, 0.85);
-      --ease: cubic-bezier(0.16, 1, 0.3, 1); /* 苹果式细腻曲线 */
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
@@ -25,11 +25,10 @@ const title = "TQSY's Space";
       color: var(--text-dark); 
       font-family: -apple-system, system-ui, sans-serif; 
       overflow-x: hidden;
-      opacity: 0; /* 初始透明 */
+      opacity: 0;
       animation: fadeInBody 1.5s var(--ease) forwards;
     }
 
-    /* 背景微光 */
     .bg-glow { 
       position: fixed; 
       top: 0; left: 0; 
@@ -38,7 +37,6 @@ const title = "TQSY's Space";
       z-index: -1; 
     }
 
-    /* 标题动画 */
     .hero { 
       height: 100vh; 
       display: flex; 
@@ -66,7 +64,6 @@ const title = "TQSY's Space";
       animation: fadeIn 1s var(--ease) 0.8s forwards;
     }
 
-    /* 列表交错动画 */
     .container { max-width: 500px; margin: 0 auto; padding-bottom: 250px; }
     .nav-item { 
       display: flex; 
@@ -85,66 +82,53 @@ const title = "TQSY's Space";
       opacity: 0;
       transform: translateY(20px);
     }
-    .nav-item:hover { 
-      transform: translateY(-4px) scale(1.02); 
-      color: var(--miku-green); 
-      border-color: var(--miku-green); 
-    }
+    .nav-item:hover { transform: translateY(-4px); color: var(--miku-green); border-color: var(--miku-green); }
 
-    /* 播放器进入 */
+    /* 播放器卡片 - 移动端适配关键区 */
     .player-card { 
       position: fixed; 
       left: 25px; bottom: 25px; 
-      width: 300px; padding: 15px; 
+      width: 300px; padding: 12px; 
       background: var(--glass); 
       backdrop-filter: blur(25px); 
-      border-radius: 24px; 
+      border-radius: 20px; 
       border: 1px solid rgba(0,207,181,0.2); 
       display: flex; 
       align-items: center; 
-      gap: 15px; 
+      gap: 12px; 
       box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
       z-index: 1000; 
       opacity: 0;
-      transform: translateX(-30px);
       animation: slideInLeft 1.2s var(--ease) 1s forwards;
     }
-    .album-cover { 
-      width: 60px; height: 60px; 
-      border-radius: 12px; 
-      object-fit: cover; 
-      background: #eee; 
-      transition: 0.3s; 
-    }
-    .is-playing .album-cover { 
-      box-shadow: 0 0 20px rgba(0,207,181,0.3); 
-      transform: scale(1.05); 
-    }
+    .album-cover { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; transition: 0.3s; }
+    .is-playing .album-cover { box-shadow: 0 0 15px rgba(0,207,181,0.3); transform: scale(1.05); }
 
     .song-info { flex: 1; overflow: hidden; }
-    .song-name { font-size: 14px; font-weight: 700; color: var(--text-dark); }
-    .song-artist { font-size: 11px; color: var(--miku-green); font-weight: 500; }
-    .play-pause { 
-      width: 40px; height: 40px; 
-      background: var(--text-dark); color: white; 
-      border: none; border-radius: 50%; 
-      cursor: pointer; display: flex; 
-      align-items: center; justify-content: center; 
+    .song-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-artist { font-size: 11px; color: var(--miku-green); }
+    .play-pause { width: 34px; height: 34px; background: var(--text-dark); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    /* 联系面板 */
+    .contact-panel { position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; opacity: 0; transform: translateY(20px); transition: 0.6s var(--ease); pointer-events: none; z-index: 1001; }
+    body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .email-chip { background: white; padding: 8px 16px; border-radius: 50px; font-size: 10px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
+
+    /* 📱 移动端小屏幕适配脚本 */
+    @media (max-width: 600px) {
+      .player-card { width: 220px; left: 15px; bottom: 15px; padding: 8px; }
+      .album-cover { width: 40px; height: 40px; }
+      .song-name { font-size: 11px; }
+      .contact-panel { right: 15px; bottom: 85px; } /* 手机端邮箱上移，防止遮挡播放器 */
+      .email-chip { padding: 6px 12px; font-size: 9px; }
     }
 
-    /* 关键帧定义 */
     @keyframes fadeInBody { to { opacity: 1; } }
     @keyframes heroUp { from { transform: translateY(30px); } to { transform: translateY(0); } }
     @keyframes unblur { to { filter: blur(0); } }
     @keyframes fadeIn { to { opacity: 1; } }
-    @keyframes slideInLeft { to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes navStagger { to { opacity: 1; transform: translateY(0); } }
-
-    /* 邮箱面板 */
-    .contact-panel { position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; opacity: 0; transform: translateY(20px); transition: 0.6s var(--ease); pointer-events: none; }
-    body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
-    .email-chip { background: white; padding: 10px 18px; border-radius: 50px; font-size: 11px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
-    .email-chip:hover { background: var(--miku-green); color: white; transform: translateX(-5px); }
   </style>
 </head>
 <body>
@@ -187,7 +171,7 @@ const title = "TQSY's Space";
   </div>
 
   <script is:inline>
-    // 列表项交错动画脚本
+    // 列表项交错动画
     const items = document.querySelectorAll('.nav-item');
     items.forEach((item, index) => {
       item.style.animation = `navStagger 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${0.5 + index * 0.1}s forwards`;
@@ -197,18 +181,31 @@ const title = "TQSY's Space";
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
 
-    playBtn.onclick = () => {
+    // 状态切换函数
+    function togglePlay() {
       if (audio.paused) {
         audio.play().then(() => {
           playBtn.innerText = "⏸";
           playerCard.classList.add('is-playing');
-        });
+        }).catch(e => console.log("自动播放被浏览器拦截，等待用户交互"));
       } else {
         audio.pause();
         playBtn.innerText = "▶";
         playerCard.classList.remove('is-playing');
       }
+    }
+
+    playBtn.onclick = (e) => {
+      e.stopPropagation();
+      togglePlay();
     };
+
+    // 🔊 自动播放逻辑：由于浏览器限制，只要用户点击页面任何地方，就开始播放
+    window.addEventListener('click', () => {
+      if (audio.paused) {
+        togglePlay();
+      }
+    }, { once: true }); // 只触发一次
 
     window.onscroll = () => {
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 150;
