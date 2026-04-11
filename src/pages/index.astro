@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - Final Victory Version
+// TQSY's Space - 终极复活版 (在线音频源)
 const title = "TQSY's Space";
 ---
 
@@ -31,7 +31,7 @@ const title = "TQSY's Space";
     .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; text-decoration: none; color: var(--text-dark); font-weight: 600; margin-bottom: 16px; transition: 0.4s; }
     .nav-item:hover { transform: scale(1.02) translateY(-4px); border-color: var(--miku-green); color: var(--miku-green); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
 
-    /* 播放器 */
+    /* 播放器 UI */
     .player-card { position: fixed; left: 25px; bottom: 25px; width: 280px; padding: 12px; background: var(--glass); backdrop-filter: blur(25px); border-radius: 22px; border: 1px solid rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1000; }
     .album-cover { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; background: #eee; transition: 0.5s; }
     .is-playing .album-cover { animation: rotate 12s linear infinite; }
@@ -72,14 +72,13 @@ const title = "TQSY's Space";
   <div class="player-card" id="playerCard">
     <img src="https://img.moegirl.org.cn/common/thumb/b/b7/Miku_v3_visual.png/250px-Miku_v3_visual.png" class="album-cover">
     <div class="song-info">
-      <div class="song-name" id="snText">橙交差点</div>
+      <div class="song-name">橙交差点</div>
       <div class="song-artist">初音ミク</div>
     </div>
     <button class="play-pause" id="playBtn">▶</button>
+    
     <audio id="mainAudio" loop preload="auto">
-      <source src="/miku.mp3" type="audio/mpeg">
-      <source src="miku.mp3" type="audio/mpeg">
-      <source src="./miku.mp3" type="audio/mpeg">
+      <source src="https://files.catbox.moe/o3t305.mp3" type="audio/mpeg">
     </audio>
   </div>
 
@@ -94,22 +93,15 @@ const title = "TQSY's Space";
     const audio = document.getElementById('mainAudio');
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
-    const snText = document.getElementById('snText');
 
     playBtn.onclick = () => {
       if (audio.paused) {
         audio.play().then(() => {
           playBtn.innerText = "⏸";
           playerCard.classList.add('is-playing');
-          snText.innerText = "橙交差点";
         }).catch(err => {
-          console.error(err);
-          snText.innerText = "资源404，正在尝试重载...";
-          // 最终尝试：强制浏览器重新识别
-          audio.load();
-          audio.play().catch(() => {
-             snText.innerText = "文件丢失(404)";
-          });
+          console.error("播放失败:", err);
+          alert("浏览器拦截了播放，请再次点击按钮！");
         });
       } else {
         audio.pause();
@@ -118,6 +110,7 @@ const title = "TQSY's Space";
       }
     };
 
+    // 滚动监听
     window.onscroll = () => {
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 150;
       document.body.classList.toggle('is-bottom', isBottom);
