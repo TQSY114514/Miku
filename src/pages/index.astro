@@ -1,13 +1,10 @@
----
-// TQSY's Space - 完整复活版
-const title = "TQSY's Space";
----
-
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{title}</title>
+  <title>TQSY's Space</title>
+
   <style>
     :root {
       --miku-green: #00cfb5;
@@ -18,7 +15,7 @@ const title = "TQSY's Space";
     }
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
     body { background-color: var(--bg-white); color: var(--text-dark); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow-x: hidden; }
-    
+
     .bg-glow { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.05) 0%, transparent 40%); z-index: -1; }
 
     .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -26,41 +23,34 @@ const title = "TQSY's Space";
     .hero-sub { color: var(--text-gray); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.8rem; margin-top: 10px; }
 
     .container { max-width: 500px; margin: 0 auto; padding-bottom: 250px; }
-    .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; text-decoration: none; color: var(--text-dark); font-weight: 600; margin-bottom: 16px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    .nav-item:hover { transform: scale(1.02) translateY(-4px); border-color: var(--miku-green); color: var(--miku-green); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+    .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; background: var(--glass); backdrop-filter: blur(20px); border-radius: 24px; text-decoration: none; color: var(--text-dark); font-weight: 600; margin-bottom: 16px; }
 
-    .player-card { position: fixed; left: 25px; bottom: 25px; width: 280px; padding: 12px; background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 22px; border: 1px solid rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1000; }
-    .album-cover { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; background: #eee; transition: 0.5s; }
+    .player-card { position: fixed; left: 25px; bottom: 25px; width: 280px; padding: 12px; background: var(--glass); backdrop-filter: blur(25px); border-radius: 22px; display: flex; align-items: center; gap: 12px; }
+    .album-cover { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; }
     .is-playing .album-cover { animation: rotate 12s linear infinite; }
-    .song-info { flex: 1; overflow: hidden; }
-    .song-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-info { flex: 1; }
+    .song-name { font-size: 14px; font-weight: 700; }
     .song-artist { font-size: 11px; color: var(--text-gray); }
-    .play-pause { width: 36px; height: 36px; background: var(--text-dark); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-
-    .contact-panel { position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; opacity: 0; transform: translateY(20px); transition: 0.5s; pointer-events: none; }
-    body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
-    .email-chip { background: white; padding: 10px 18px; border-radius: 50px; font-size: 11px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
-    .email-chip:hover { background: var(--miku-green); color: white; border-color: var(--miku-green); }
+    .play-pause { width: 36px; height: 36px; background: var(--text-dark); color: white; border: none; border-radius: 50%; cursor: pointer; }
 
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
 </head>
+
 <body>
 
   <div class="bg-glow"></div>
 
   <section class="hero">
-    <h1>{title}</h1>
+    <h1>TQSY's Space</h1>
     <p class="hero-sub">Weather Holy Salt · TQSY</p>
   </section>
 
   <div class="container">
-    <div class="nav-list">
-      <a href="https://github.com/TQSY114514" target="_blank" class="nav-item">GitHub</a>
-    </div>
+    <a href="https://github.com/TQSY114514" target="_blank" class="nav-item">GitHub</a>
   </div>
 
-  <!-- 🎵 播放器UI（你原本就该有的） -->
+  <!-- 播放器 -->
   <div class="player-card">
     <img src="/cover.jpg" class="album-cover">
     <div class="song-info">
@@ -70,12 +60,11 @@ const title = "TQSY's Space";
     <button class="play-pause">▶</button>
   </div>
 
-  <!-- 🎵 音频核心 -->
+  <!-- 音频 -->
   <audio id="bgm" loop>
     <source src="/music.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- 🎵 播放逻辑 -->
   <script>
     const audio = document.getElementById("bgm");
     const btn = document.querySelector(".play-pause");
@@ -95,7 +84,6 @@ const title = "TQSY's Space";
       isPlaying = !isPlaying;
     });
 
-    // 解决浏览器自动播放限制
     document.addEventListener("click", () => {
       audio.play().catch(() => {});
     }, { once: true });
