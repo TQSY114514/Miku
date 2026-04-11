@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 最终修复版
+// TQSY's Space - 完整复活版
 const title = "TQSY's Space";
 ---
 
@@ -17,84 +17,111 @@ const title = "TQSY's Space";
       --glass: rgba(255, 255, 255, 0.85);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-    body { background-color: var(--bg-white); color: var(--text-dark); font-family: -apple-system, sans-serif; overflow-x: hidden; }
+    body { background-color: var(--bg-white); color: var(--text-dark); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow-x: hidden; }
     
-    /* 背景流光 */
     .bg-glow { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.05) 0%, transparent 40%); z-index: -1; }
 
-    /* 标题 */
+    /* 标题区 */
     .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-    .hero h1 { font-size: clamp(3rem, 10vw, 6rem); font-weight: 800; background: linear-gradient(#1d1d1f, #86868b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero h1 { font-size: clamp(3rem, 10vw, 6rem); font-weight: 800; letter-spacing: -0.05em; background: linear-gradient(#1d1d1f, #86868b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { color: var(--text-gray); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.8rem; margin-top: 10px; }
 
-    /* 链接 */
-    .container { max-width: 500px; margin: 0 auto; padding-bottom: 200px; }
-    .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 20px 25px; background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 20px; text-decoration: none; color: var(--text-dark); font-weight: 600; margin-bottom: 12px; transition: 0.3s; }
-    .nav-item:hover { transform: translateY(-3px); border-color: var(--miku-green); color: var(--miku-green); }
+    /* 社交链接列表 */
+    .container { max-width: 500px; margin: 0 auto; padding-bottom: 250px; }
+    .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; text-decoration: none; color: var(--text-dark); font-weight: 600; margin-bottom: 16px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .nav-item:hover { transform: scale(1.02) translateY(-4px); border-color: var(--miku-green); color: var(--miku-green); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
 
-    /* 播放器 */
-    .player-card { position: fixed; left: 25px; bottom: 25px; width: 280px; padding: 12px; background: var(--glass); backdrop-filter: blur(25px); border-radius: 20px; border: 1px solid rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1000; transition: 0.5s; }
-    .album-cover { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; background: #eee; }
-    .is-playing .album-cover { animation: rotate 10s linear infinite; }
+    /* 播放器固定在左下角 */
+    .player-card { position: fixed; left: 25px; bottom: 25px; width: 280px; padding: 12px; background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 22px; border: 1px solid rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1000; }
+    .album-cover { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; background: #eee; transition: 0.5s; }
+    .is-playing .album-cover { animation: rotate 12s linear infinite; }
     .song-info { flex: 1; overflow: hidden; }
     .song-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .song-artist { font-size: 11px; color: var(--text-gray); }
-    .play-pause { width: 35px; height: 35px; background: var(--text-dark); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .play-pause { width: 36px; height: 36px; background: var(--text-dark); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+    /* 邮箱联系面板 (滚动到最下面才显示) */
+    .contact-panel { position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; opacity: 0; transform: translateY(20px); transition: 0.5s; pointer-events: none; }
+    body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .email-chip { background: white; padding: 10px 18px; border-radius: 50px; font-size: 11px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
+    .email-chip:hover { background: var(--miku-green); color: white; border-color: var(--miku-green); }
 
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
+
   <div class="bg-glow"></div>
-  <section class="hero"><h1>{title}</h1></section>
+
+  <section class="hero">
+    <h1>{title}</h1>
+    <p class="hero-sub">Weather Holy Salt · TQSY</p>
+  </section>
 
   <div class="container">
     <div class="nav-list">
-      <a href="https://github.com/TQSY114514" class="nav-item">GitHub</a>
-      <a href="https://luogu.com.cn/user/1849345" class="nav-item">Luogu</a>
-      <a href="https://space.bilibili.com/1180124107" class="nav-item">Bilibili</a>
+      <a href="https://github.com/TQSY114514" target="_blank" class="nav-item">GitHub</a>
+      <a href="https://luogu.com.cn/user/1849345" target="_blank" class="nav-item">Luogu</a>
+      <a href="https://space.bilibili.com/1180124107" target="_blank" class="nav-item">Bilibili</a>
+      <a href="https://x.com/TianY43737" target="_blank" class="nav-item">X (Twitter)</a>
+      <a href="https://www.instagram.com/tqsy114514/" target="_blank" class="nav-item">Instagram</a>
+      <a href="https://www.facebook.com/profile.php?id=61577768467133" target="_blank" class="nav-item">Facebook</a>
     </div>
   </div>
 
   <div class="player-card" id="playerCard">
     <img src="https://img.moegirl.org.cn/common/thumb/b/b7/Miku_v3_visual.png/250px-Miku_v3_visual.png" class="album-cover" id="cover">
     <div class="song-info">
-      <div class="song-name" id="statusText">橙交差点</div>
+      <div class="song-name" id="songNameDisplay">橙交差点</div>
       <div class="song-artist">初音ミク</div>
     </div>
     <button class="play-pause" id="playBtn">▶</button>
-    <audio id="mainAudio" loop>
+    <audio id="mainAudio" loop preload="auto">
       <source src="/miku.mp3" type="audio/mpeg">
-      <source src="./miku.mp3" type="audio/mpeg">
+      <source src="miku.mp3" type="audio/mpeg">
     </audio>
+  </div>
+
+  <div class="contact-panel">
+    <a href="mailto:tqishengyan@gmail.com" class="email-chip">tqishengyan@gmail.com</a>
+    <a href="mailto:3635316905@qq.com" class="email-chip">3635316905@qq.com</a>
+    <a href="mailto:tianqishengyan_zhj@163.com" class="email-chip">tianqishengyan_zhj@163.com</a>
+    <a href="mailto:tianqishengyan_zhj@outlook.com" class="email-chip">tianqishengyan_zhj@outlook.com</a>
   </div>
 
   <script is:inline>
     const audio = document.getElementById('mainAudio');
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
-    const statusText = document.getElementById('statusText');
+    const songNameDisplay = document.getElementById('songNameDisplay');
 
-    playBtn.onclick = async () => {
-      if (audio.paused) {
-        statusText.innerText = "加载中...";
-        try {
-          // 强制重新探测资源位置
-          await audio.load();
-          await audio.play();
-          playBtn.innerText = "⏸";
-          playerCard.classList.add('is-playing');
-          statusText.innerText = "橙交差点";
-        } catch (err) {
-          console.error(err);
-          // 如果还是404，给用户一个明确的Debug提示
-          alert("文件还是 404！请去 Vercel 选 Redeploy 并勾选 Clean Cache。");
-          statusText.innerText = "文件丢失(404)";
+    if (playBtn && audio) {
+      playBtn.onclick = function() {
+        if (audio.paused) {
+          // 强制重载资源
+          if (audio.readyState === 0) audio.load();
+          
+          audio.play().then(() => {
+            playBtn.innerText = "⏸";
+            playerCard.classList.add('is-playing');
+            songNameDisplay.innerText = "橙交差点";
+          }).catch(err => {
+            console.error(err);
+            songNameDisplay.innerText = "文件丢失(404)";
+            alert("点击了播放，但 miku.mp3 没找到。请确保在 GitHub 的 public 目录下有这个文件。");
+          });
+        } else {
+          audio.pause();
+          playBtn.innerText = "▶";
+          playerCard.classList.remove('is-playing');
         }
-      } else {
-        audio.pause();
-        playBtn.innerText = "▶";
-        playerCard.classList.remove('is-playing');
-      }
+      };
+    }
+
+    // 滚动监听
+    window.onscroll = function() {
+      const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 150;
+      document.body.classList.toggle('is-bottom', isBottom);
     };
   </script>
 </body>
