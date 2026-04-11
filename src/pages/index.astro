@@ -121,68 +121,80 @@ const title = "TQSY's Space";
     <a href="mailto:tianqishengyan_zhj@outlook.com" class="email-chip">tianqishengyan_zhj@outlook.com</a>
   </div>
 
-  <script>
-    const jsmediatags = window.jsmediatags;
-    const audio = document.getElementById('mainAudio');
-    const playBtn = document.getElementById('playBtn');
-    const songNameDisplay = document.getElementById('songName');
-    const songStatusDisplay = document.getElementById('songStatus');
-    const coverDisplay = document.getElementById('cover');
-    const playerCard = document.getElementById('playerCard');
+ <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
 
-    // 自动解析元数据逻辑
-    function loadMetadata() {
-      const songUrl = audio.src;
-      
-      jsmediatags.read(songUrl, {
-        onSuccess: function(tag) {
-          const tags = tag.tags;
-          // 自动设置歌名
-          songNameDisplay.innerText = tags.title || "Unknown Track";
-          
-          // 自动扣封面
-          const image = tags.picture;
-          if (image) {
-            let base64String = "";
-            for (let i = 0; i < image.data.length; i++) {
-              base64String += String.fromCharCode(image.data[i]);
+<script is:inline>
+  // 使用匿名函数包裹，避免污染全局
+  (() => {
+    document.addEventListener('DOMContentLoaded', () => {
+      // 这里的 window.jsmediatags 强制断言，避开 TS 检查
+      const jsmediatags = window.jsmediatags;
+      const audio = document.getElementById('mainAudio');
+      const playBtn = document.getElementById('playBtn');
+      const songNameDisplay = document.getElementById('songName');
+      const songStatusDisplay = document.getElementById('songStatus');
+      const coverDisplay = document.getElementById('cover');
+      const playerCard = document.getElementById('playerCard');
+
+      // 严谨检查：如果这些元素任何一个不存在，就直接退出，不往下走
+      if (!audio || !playBtn || !songNameDisplay || !songStatusDisplay || !coverDisplay || !playerCard || !jsmediatags) {
+        console.warn("TQSY Player: Some elements are missing.");
+        return;
+      }
+
+      function loadMetadata() {
+        const songUrl = audio.src;
+        // 如果没有设置文件名，或者 URL 不合法，跳过
+        if (!songUrl || songUrl.endsWith('.mp3') === false) return;
+
+        jsmediatags.read(songUrl, {
+          onSuccess: function(tag) {
+            const tags = tag.tags;
+            songNameDisplay.innerText = tags.title || "Unknown Track";
+            
+            const image = tags.picture;
+            if (image) {
+              let base64String = "";
+              for (let i = 0; i < image.data.length; i++) {
+                base64String += String.fromCharCode(image.data[i]);
+              }
+              const base64 = "data:" + image.format + ";base64," + window.btoa(base64String);
+              coverDisplay.src = base64;
+            } else {
+              coverDisplay.src = "https://via.placeholder.com/100?text=TQSY";
             }
-            const base64 = "data:" + image.format + ";base64," + window.btoa(base64String);
-            coverDisplay.src = base64;
-          } else {
-            coverDisplay.src = "https://via.placeholder.com/100?text=TQSY";
+          },
+          onError: function(err) {
+            console.error('Metadata error:', err);
+            // 发生错误时尝试从路径获取歌名
+            const fileName = songUrl.split('/').pop();
+            songNameDisplay.innerText = fileName ? decodeURI(fileName) : "BGM";
+            coverDisplay.src = "https://via.placeholder.com/100?text=Music";
           }
-        },
-        onError: function(error) {
-          songNameDisplay.innerText = songUrl.split('/').pop();
-          coverDisplay.src = "https://via.placeholder.com/100?text=Error";
+        });
+      }
+
+      playBtn.addEventListener('click', () => {
+        if (audio.paused) {
+          audio.play().catch(e => console.log("Playback interaction blocked"));
+          playBtn.innerText = "⏸";
+          songStatusDisplay.innerText = "Playing";
+          playerCard.classList.add('is-playing');
+        } else {
+          audio.pause();
+          playBtn.innerText = "▶";
+          songStatusDisplay.innerText = "Paused";
+          playerCard.classList.remove('is-playing');
         }
       });
-    }
 
-    // 播放控制
-    playBtn.addEventListener('click', () => {
-      if (audio.paused) {
-        audio.play();
-        playBtn.innerText = "⏸";
-        songStatusDisplay.innerText = "Playing";
-        playerCard.classList.add('is-playing');
-      } else {
-        audio.pause();
-        playBtn.innerText = "▶";
-        songStatusDisplay.innerText = "Paused";
-        playerCard.classList.remove('is-playing');
-      }
+      loadMetadata();
     });
 
-    // 滚动检测：划到底部才出邮箱
+    // 滚动监听
     window.addEventListener('scroll', () => {
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 80;
       document.body.classList.toggle('is-bottom', isBottom);
     });
-
-    // 页面加载后立即解析
-    loadMetadata();
-  </script>
-</body>
-</html>
+  })();
+</script>
