@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 兼容性终极修复版
+// TQSY's Space - 最终兼容性测试版
 const title = "TQSY's Space";
 ---
 
@@ -26,25 +26,25 @@ const title = "TQSY's Space";
     .hero h1 { font-size: clamp(3rem, 10vw, 6rem); font-weight: 800; background: linear-gradient(#1d1d1f, #86868b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .hero-sub { color: var(--text-gray); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.8rem; margin-top: 10px; }
 
-    /* 社交链接 (已全部找回) */
+    /* 社交链接 (已全部复活) */
     .container { max-width: 500px; margin: 0 auto; padding-bottom: 250px; }
     .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; text-decoration: none; color: var(--text-dark); font-weight: 600; margin-bottom: 16px; transition: 0.4s; }
-    .nav-item:hover { transform: translateY(-4px); color: var(--miku-green); border-color: var(--miku-green); }
+    .nav-item:hover { transform: translateY(-4px); color: var(--miku-green); border-color: var(--miku-green); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
 
     /* 播放器 */
     .player-card { position: fixed; left: 25px; bottom: 25px; width: 280px; padding: 12px; background: var(--glass); backdrop-filter: blur(25px); border-radius: 22px; border: 1px solid rgba(0,0,0,0.08); display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1000; }
     .album-cover { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; background: #eee; }
     .is-playing .album-cover { animation: rotate 12s linear infinite; }
     .song-info { flex: 1; overflow: hidden; }
-    .song-name { font-size: 14px; font-weight: 700; }
+    .song-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .song-artist { font-size: 11px; color: var(--text-gray); }
     .play-pause { width: 36px; height: 36px; background: var(--text-dark); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-    /* 邮箱区 (已全部找回) */
+    /* 邮箱区 (已全部复活) */
     .contact-panel { position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; opacity: 0; transform: translateY(20px); transition: 0.5s; pointer-events: none; }
     body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .email-chip { background: white; padding: 10px 18px; border-radius: 50px; font-size: 11px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
-    .email-chip:hover { background: var(--miku-green); color: white; }
+    .email-chip:hover { background: var(--miku-green); color: white; border-color: var(--miku-green); }
 
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
@@ -72,12 +72,11 @@ const title = "TQSY's Space";
   <div class="player-card" id="playerCard">
     <img src="https://img.moegirl.org.cn/common/thumb/b/b7/Miku_v3_visual.png/250px-Miku_v3_visual.png" class="album-cover">
     <div class="song-info">
-      <div class="song-name" id="sn">测试音频</div>
-      <div class="song-artist">稳定直链</div>
+      <div class="song-name" id="sn">测试乐曲</div>
+      <div class="song-artist">Google Media Center</div>
     </div>
     <button class="play-pause" id="playBtn">▶</button>
-    <audio id="mainAudio" loop preload="auto" crossorigin="anonymous">
-      <source src="https://upload.wikimedia.org/wikipedia/commons/d/db/Nyan_Cat_original_280px_frame.ogg" type="audio/ogg">
+    <audio id="mainAudio" loop preload="auto">
       <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
     </audio>
   </div>
@@ -103,7 +102,7 @@ const title = "TQSY's Space";
           sn.innerText = "正在播放";
         }).catch(err => {
           console.error(err);
-          alert("如果马叫可以响，这一个也一定能响。如果不响，请检查浏览器是否静音了本站！");
+          alert("播放被拦截。请尝试点击页面任意位置后再点击播放按钮。");
         });
       } else {
         audio.pause();
