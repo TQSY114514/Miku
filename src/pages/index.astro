@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 最终回归稳健版 (手动播放 + 细腻动效 + 移动端适配)
+// TQSY's Space - 细节微调版 (移动端布局间距优化)
 const title = "TQSY's Space";
 ---
 
@@ -109,7 +109,7 @@ const title = "TQSY's Space";
     .song-artist { font-size: 11px; color: var(--miku-green); }
     .play-pause { width: 34px; height: 34px; background: var(--text-dark); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-    /* 联系面板 */
+    /* 联系面板 (默认桌面端位置) */
     .contact-panel { position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; opacity: 0; transform: translateY(20px); transition: 0.6s var(--ease); pointer-events: none; z-index: 1001; }
     body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .email-chip { background: white; padding: 8px 16px; border-radius: 50px; font-size: 10px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
@@ -118,7 +118,9 @@ const title = "TQSY's Space";
     /* 📱 移动端适配 */
     @media (max-width: 600px) {
       .player-card { width: 220px; left: 15px; bottom: 15px; }
-      .contact-panel { right: 15px; bottom: 85px; } /* 邮箱上移，不挡播放器 */
+      /* 将邮箱位置进一步上调，确保留出足够的间距 */
+      .contact-panel { right: 15px; bottom: 120px; } 
+      .email-chip { padding: 7px 14px; font-size: 9px; }
     }
 
     @keyframes fadeInBody { to { opacity: 1; } }
@@ -169,7 +171,6 @@ const title = "TQSY's Space";
   </div>
 
   <script is:inline>
-    // 列表项交错动画
     const items = document.querySelectorAll('.nav-item');
     items.forEach((item, index) => {
       item.style.animation = `navStagger 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${0.5 + index * 0.1}s forwards`;
