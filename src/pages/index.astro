@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - Single Track Edition
+// TQSY's Space - Super Stable Version
 const title = "TQSY's Space";
 ---
 
@@ -8,77 +8,75 @@ const title = "TQSY's Space";
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title}</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
   <style>
     :root {
       --miku-green: #00cfb5;
       --bg-white: #fcfcfc;
       --text-dark: #1d1d1f;
       --text-gray: #86868b;
-      --glass: rgba(255, 255, 255, 0.8);
+      --glass: rgba(255, 255, 255, 0.85);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
     body { background-color: var(--bg-white); color: var(--text-dark); font-family: -apple-system, system-ui, sans-serif; overflow-x: hidden; }
 
-    /* 背景装饰：流光感 */
+    /* 背景流光 */
     .bg-glow {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.04) 0%, transparent 40%);
+      background: radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.05) 0%, transparent 40%);
       z-index: -1;
     }
 
     /* 标题区 */
     .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-    .hero h1 { font-size: clamp(3.5rem, 12vw, 7rem); font-weight: 800; letter-spacing: -0.05em; background: linear-gradient(#1d1d1f, #86868b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero-sub { color: var(--text-gray); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.9rem; margin-top: 10px; }
+    .hero h1 { font-size: clamp(3rem, 12vw, 7rem); font-weight: 800; letter-spacing: -0.05em; background: linear-gradient(#1d1d1f, #86868b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { color: var(--text-gray); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.8rem; margin-top: 10px; }
 
     /* 链接容器 */
     .container { max-width: 500px; margin: 0 auto; padding-bottom: 200px; }
     .nav-item {
       display: flex; align-items: center; justify-content: space-between;
       padding: 22px 28px; background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(0,0,0,0.04); border-radius: 24px; text-decoration: none; color: var(--text-dark);
+      border: 1px solid rgba(0,0,0,0.05); border-radius: 24px; text-decoration: none; color: var(--text-dark);
       font-weight: 600; margin-bottom: 16px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .nav-item:hover { transform: scale(1.02) translateY(-4px); border-color: var(--miku-green); color: var(--miku-green); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
 
-    /* --- 音乐播放器 --- */
+    /* 播放器 UI */
     .player-card {
       position: fixed; left: 25px; bottom: 25px;
-      width: 260px; padding: 12px;
+      width: 280px; padding: 12px;
       background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-      border-radius: 22px; border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 22px; border: 1px solid rgba(0,0,0,0.08);
       display: flex; align-items: center; gap: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05); z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1000;
     }
 
     .album-cover {
-      width: 48px; height: 48px; border-radius: 10px;
-      object-fit: cover; background: #eee;
+      width: 48px; height: 48px; border-radius: 12px;
+      object-fit: cover; background: #ddd;
       animation: rotate 12s linear infinite; animation-play-state: paused;
     }
     .is-playing .album-cover { animation-play-state: running; }
 
     .song-info { flex: 1; overflow: hidden; }
-    .song-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
-    .song-status { font-size: 10px; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; }
+    .song-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-artist { font-size: 11px; color: var(--text-gray); }
 
     .play-pause { 
-      width: 34px; height: 34px; background: var(--text-dark); color: white; border: none;
-      border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; 
-      font-size: 12px; transition: 0.3s;
+      width: 36px; height: 36px; background: var(--text-dark); color: white; border: none;
+      border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;
     }
     .play-pause:hover { background: var(--miku-green); transform: scale(1.1); }
 
-    /* --- 右下角联系区 --- */
+    /* 联系区 */
     .contact-panel {
       position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
-      opacity: 0; transform: translateY(20px); transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none;
+      opacity: 0; transform: translateY(20px); transition: 0.5s; pointer-events: none;
     }
     body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .email-chip { background: white; padding: 10px 18px; border-radius: 50px; font-size: 12px; color: var(--text-gray); border: 1px solid #eee; text-decoration: none; transition: 0.3s; font-family: monospace; }
-    .email-chip:hover { background: var(--miku-green); color: white; border-color: var(--miku-green); }
+    .email-chip:hover { background: var(--miku-green); color: white; }
 
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   </style>
@@ -94,107 +92,64 @@ const title = "TQSY's Space";
 
   <div class="container">
     <div class="nav-list">
-      <a href="https://github.com/TQSY114514" class="nav-item" target="_blank">GitHub</a>
-      <a href="https://luogu.com.cn/user/1849345" class="nav-item" target="_blank">Luogu (洛谷)</a>
-      <a href="https://space.bilibili.com/1180124107" class="nav-item" target="_blank">Bilibili</a>
-      <a href="https://x.com/TianY43737" class="nav-item" target="_blank">X (Twitter)</a>
-      <a href="https://www.instagram.com/tqsy114514/" class="nav-item" target="_blank">Instagram</a>
-      <a href="https://www.facebook.com/profile.php?id=61577768467133" class="nav-item" target="_blank">Facebook</a>
+      <a href="https://github.com/TQSY114514" class="nav-item">GitHub</a>
+      <a href="https://luogu.com.cn/user/1849345" class="nav-item">Luogu</a>
+      <a href="https://space.bilibili.com/1180124107" class="nav-item">Bilibili</a>
+      <a href="https://x.com/TianY43737" class="nav-item">X (Twitter)</a>
+      <a href="https://www.instagram.com/tqsy114514/" class="nav-item">Instagram</a>
+      <a href="https://www.facebook.com/profile.php?id=61577768467133" class="nav-item">Facebook</a>
     </div>
   </div>
 
   <div class="player-card" id="playerCard">
-    <img src="" class="album-cover" id="cover" alt="Cover">
+    <img src="https://img.moegirl.org.cn/common/thumb/b/b7/Miku_v3_visual.png/250px-Miku_v3_visual.png" class="album-cover" id="cover">
     <div class="song-info">
-      <div class="song-name" id="songName">BGM Loading...</div>
-      <div class="song-status" id="songStatus">Paused</div>
+      <div class="song-name">橙交差点</div>
+      <div class="song-artist">初音ミク</div>
     </div>
     <button class="play-pause" id="playBtn">▶</button>
-    <audio id="mainAudio" src="/miku.mp3" loop></audio>
+    <audio id="mainAudio" src="/miku.mp3" loop preload="auto"></audio>
   </div>
 
   <div class="contact-panel">
-    <div style="font-size: 10px; color: #ccc; margin-right: 15px; margin-bottom: 5px;">CONTACT</div>
     <a href="mailto:tqishengyan@gmail.com" class="email-chip">tqishengyan@gmail.com</a>
     <a href="mailto:3635316905@qq.com" class="email-chip">3635316905@qq.com</a>
     <a href="mailto:tianqishengyan_zhj@163.com" class="email-chip">tianqishengyan_zhj@163.com</a>
     <a href="mailto:tianqishengyan_zhj@outlook.com" class="email-chip">tianqishengyan_zhj@outlook.com</a>
   </div>
 
- <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
-
-<script is:inline>
-  // 使用匿名函数包裹，避免污染全局
-  (() => {
+  <script is:inline>
+    // 抛弃复杂的解析库，用最原始的 JS
     document.addEventListener('DOMContentLoaded', () => {
-      // 这里的 window.jsmediatags 强制断言，避开 TS 检查
-      const jsmediatags = window.jsmediatags;
       const audio = document.getElementById('mainAudio');
       const playBtn = document.getElementById('playBtn');
-      const songNameDisplay = document.getElementById('songName');
-      const songStatusDisplay = document.getElementById('songStatus');
-      const coverDisplay = document.getElementById('cover');
       const playerCard = document.getElementById('playerCard');
 
-      // 严谨检查：如果这些元素任何一个不存在，就直接退出，不往下走
-      if (!audio || !playBtn || !songNameDisplay || !songStatusDisplay || !coverDisplay || !playerCard || !jsmediatags) {
-        console.warn("TQSY Player: Some elements are missing.");
-        return;
-      }
-
-      function loadMetadata() {
-        const songUrl = audio.src;
-        // 如果没有设置文件名，或者 URL 不合法，跳过
-        if (!songUrl || songUrl.endsWith('.mp3') === false) return;
-
-        jsmediatags.read(songUrl, {
-          onSuccess: function(tag) {
-            const tags = tag.tags;
-            songNameDisplay.innerText = tags.title || "Unknown Track";
-            
-            const image = tags.picture;
-            if (image) {
-              let base64String = "";
-              for (let i = 0; i < image.data.length; i++) {
-                base64String += String.fromCharCode(image.data[i]);
-              }
-              const base64 = "data:" + image.format + ";base64," + window.btoa(base64String);
-              coverDisplay.src = base64;
-            } else {
-              coverDisplay.src = "https://via.placeholder.com/100?text=TQSY";
-            }
-          },
-          onError: function(err) {
-            console.error('Metadata error:', err);
-            // 发生错误时尝试从路径获取歌名
-            const fileName = songUrl.split('/').pop();
-            songNameDisplay.innerText = fileName ? decodeURI(fileName) : "BGM";
-            coverDisplay.src = "https://via.placeholder.com/100?text=Music";
-          }
-        });
-      }
+      if (!audio || !playBtn) return;
 
       playBtn.addEventListener('click', () => {
         if (audio.paused) {
-          audio.play().catch(e => console.log("Playback interaction blocked"));
-          playBtn.innerText = "⏸";
-          songStatusDisplay.innerText = "Playing";
-          playerCard.classList.add('is-playing');
+          // 尝试播放
+          audio.play().then(() => {
+            playBtn.innerText = "⏸";
+            playerCard.classList.add('is-playing');
+          }).catch(err => {
+            alert("播放被浏览器拦截，请再试一次！");
+            console.error(err);
+          });
         } else {
           audio.pause();
           playBtn.innerText = "▶";
-          songStatusDisplay.innerText = "Paused";
           playerCard.classList.remove('is-playing');
         }
       });
 
-      loadMetadata();
+      // 自动检测滚动
+      window.addEventListener('scroll', () => {
+        const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100;
+        document.body.classList.toggle('is-bottom', isBottom);
+      });
     });
-
-    // 滚动监听
-    window.addEventListener('scroll', () => {
-      const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 80;
-      document.body.classList.toggle('is-bottom', isBottom);
-    });
-  })();
-</script>
+  </script>
+</body>
+</html>
