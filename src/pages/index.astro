@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - Final Stable Version
+// TQSY's Space - Final Battle Version
 const title = "TQSY's Space";
 ---
 
@@ -20,7 +20,7 @@ const title = "TQSY's Space";
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
     body { background-color: var(--bg-white); color: var(--text-dark); font-family: -apple-system, system-ui, sans-serif; overflow-x: hidden; }
 
-    /* 背景流光 */
+    /* 背景装饰 */
     .bg-glow {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.05) 0%, transparent 40%);
@@ -42,7 +42,7 @@ const title = "TQSY's Space";
     }
     .nav-item:hover { transform: scale(1.02) translateY(-4px); border-color: var(--miku-green); color: var(--miku-green); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
 
-    /* 播放器 */
+    /* 播放器 UI */
     .player-card {
       position: fixed; left: 25px; bottom: 25px;
       width: 280px; padding: 12px;
@@ -66,9 +66,10 @@ const title = "TQSY's Space";
     .play-pause { 
       width: 36px; height: 36px; background: var(--text-dark); color: white; border: none;
       border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: 0.3s;
     }
 
-    /* 邮箱联系区 */
+    /* 滚动显示的联系区 */
     .contact-panel {
       position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
       opacity: 0; transform: translateY(20px); transition: 0.5s; pointer-events: none;
@@ -103,7 +104,7 @@ const title = "TQSY's Space";
   <div class="player-card" id="playerCard">
     <img src="https://img.moegirl.org.cn/common/thumb/b/b7/Miku_v3_visual.png/250px-Miku_v3_visual.png" class="album-cover" id="cover">
     <div class="song-info">
-      <div class="song-name">橙交差点</div>
+      <div class="song-name" id="displaySongName">橙交差点</div>
       <div class="song-artist">初音ミク</div>
     </div>
     <button class="play-pause" id="playBtn">▶</button>
@@ -121,7 +122,7 @@ const title = "TQSY's Space";
   </div>
 
   <script is:inline>
-    // 采用最稳健的事件绑定方式
+    // 强制执行逻辑
     const audio = document.getElementById('mainAudio');
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
@@ -129,15 +130,16 @@ const title = "TQSY's Space";
     if (playBtn && audio) {
       playBtn.onclick = function() {
         if (audio.paused) {
-          // 显式调用 load() 强制重新识别资源
+          // 强制加载一次
           if (audio.readyState === 0) audio.load();
           
           audio.play().then(() => {
             playBtn.innerText = "⏸";
             playerCard.classList.add('is-playing');
           }).catch(err => {
-            console.error("Playback error:", err);
-            alert("播放失败，请检查根目录/public下是否有miku.mp3文件，且大小写一致！");
+            console.error("播放错误:", err);
+            // 最后的 Debug 提示
+            alert("文件路径访问失败(404)。请在 Vercel 部署页面点 'Redeploy' 并勾选 'Clean Cache'！");
           });
         } else {
           audio.pause();
@@ -147,7 +149,7 @@ const title = "TQSY's Space";
       };
     }
 
-    // 底部显示联系方式
+    // 滚动监听
     window.onscroll = function() {
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100;
       document.body.classList.toggle('is-bottom', isBottom);
