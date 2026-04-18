@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 终极进化版 (响应式 + 动态动效 + 编程猫加入)
+// TQSY's Space - 终极完美版 (极简美学 + 交互优化)
 const title = "TQSY's Space";
 ---
 
@@ -18,27 +18,35 @@ const title = "TQSY's Space";
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    /* 基础重置与隐藏滚动条 */
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+      -webkit-font-smoothing: antialiased; 
+    }
     
+    /* 隐藏系统滚动条，保持极致简洁 */
+    ::-webkit-scrollbar { width: 0px; height: 0px; }
+
     body { 
       background-color: var(--bg-white); 
       color: var(--text-dark); 
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; 
       overflow-x: hidden;
       opacity: 0;
       animation: fadeInBody 1.5s var(--ease) forwards;
     }
 
-    /* 优化1：动态呼吸背景 */
     .bg-glow { 
       position: fixed; 
       top: 0; left: 0; 
       width: 100vw; height: 100vh; 
-      background: radial-gradient(circle at var(--mouse-x, 80%) var(--mouse-y, 20%), rgba(0, 207, 181, 0.08) 0%, transparent 50%); 
+      background: radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.06) 0%, transparent 40%); 
       z-index: -1; 
-      animation: pulseBg 8s infinite alternate ease-in-out;
     }
 
+    /* Hero 部分 */
     .hero { 
       height: 100vh; 
       display: flex; 
@@ -54,6 +62,7 @@ const title = "TQSY's Space";
       -webkit-background-clip: text; 
       -webkit-text-fill-color: transparent; 
       filter: blur(10px);
+      text-shadow: 0 0 30px rgba(0,0,0,0.02);
       animation: unblur 1.2s var(--ease) 0.3s both;
     }
     .hero-sub { 
@@ -66,7 +75,8 @@ const title = "TQSY's Space";
       animation: fadeIn 1s var(--ease) 0.8s forwards;
     }
 
-    .container { max-width: 500px; margin: 0 auto; padding: 0 20px 250px 20px; }
+    /* 导航列表 */
+    .container { max-width: 520px; margin: 0 auto; padding: 0 20px 250px 20px; }
     .nav-item { 
       display: flex; 
       align-items: center; 
@@ -80,38 +90,35 @@ const title = "TQSY's Space";
       color: var(--text-dark); 
       font-weight: 600; 
       margin-bottom: 16px; 
-      transition: 0.4s var(--ease);
+      transition: all 0.4s var(--ease);
       opacity: 0;
       transform: translateY(20px);
     }
     .nav-item:hover { 
-      transform: translateY(-5px); 
+      transform: translateY(-4px); 
       color: var(--miku-green); 
       border-color: var(--miku-green);
-      box-shadow: 0 10px 20px rgba(0,207,181,0.1);
+      box-shadow: 0 10px 30px rgba(0,207,181,0.1);
     }
-
-    /* 优化2：频谱动画 */
-    .visualizer {
-      display: flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 12px;
-      margin-bottom: 5px;
-      opacity: 0;
-      transition: 0.3s;
+    /* 点击时的微小反馈 */
+    .nav-item:active {
+      transform: scale(0.97);
+      background: rgba(0, 207, 181, 0.05);
     }
-    .is-playing .visualizer { opacity: 1; }
-    .bar { width: 2px; background: var(--miku-green); border-radius: 1px; }
-    .is-playing .bar { animation: bounce 0.8s infinite ease-in-out alternate; }
-    .bar:nth-child(2) { animation-delay: 0.2s; }
-    .bar:nth-child(3) { animation-delay: 0.4s; }
+    
+    .nav-tag {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-gray);
+      margin-right: 8px;
+      opacity: 0.6;
+    }
 
     /* 播放器卡片 */
     .player-card { 
       position: fixed; 
       left: 25px; bottom: 25px; 
-      width: 280px; padding: 12px; 
+      width: 300px; padding: 12px; 
       background: var(--glass); 
       backdrop-filter: blur(25px); 
       border-radius: 20px; 
@@ -124,47 +131,60 @@ const title = "TQSY's Space";
       opacity: 0;
       animation: slideInLeft 1.2s var(--ease) 1s forwards;
     }
-    .album-cover { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; transition: 0.4s; }
-    .is-playing .album-cover { transform: rotate(5deg) scale(1.1); box-shadow: 0 0 15px rgba(0,207,181,0.3); }
+    .album-cover { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; transition: 0.4s var(--ease); }
+    .is-playing .album-cover { box-shadow: 0 0 20px rgba(0,207,181,0.3); transform: scale(1.05); }
 
     .song-info { flex: 1; overflow: hidden; }
-    .song-name { font-size: 13px; font-weight: 700; }
+    .song-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .song-artist { font-size: 11px; color: var(--miku-green); }
-    
     .play-pause { 
-      width: 36px; height: 36px; 
+      width: 34px; height: 34px; 
       background: var(--text-dark); 
       color: white; border: none; 
       border-radius: 50%; cursor: pointer; 
+      display: flex; align-items: center; justify-content: center;
       transition: 0.3s;
     }
-    .play-pause:active { transform: scale(0.9); }
-    .is-playing .play-pause { background: var(--miku-green); }
+    .play-pause:active { transform: scale(0.85); }
 
     /* 联系面板 */
     .contact-panel { 
       position: fixed; right: 25px; bottom: 25px; 
       display: flex; flex-direction: column; 
       align-items: flex-end; gap: 8px; 
-      opacity: 0; pointer-events: none; 
-      transition: 0.6s var(--ease); z-index: 1001; 
+      opacity: 0; transform: translateY(20px); 
+      transition: 0.6s var(--ease); pointer-events: none; z-index: 1001; 
     }
-    body.is-bottom .contact-panel { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    body.is-bottom .contact-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .email-chip { 
       background: white; padding: 8px 16px; 
       border-radius: 50px; font-size: 10px; 
       color: var(--text-gray); border: 1px solid #eee; 
-      text-decoration: none; transition: 0.3s; 
+      text-decoration: none; transition: 0.3s; font-family: monospace; 
     }
-    .email-chip:hover { background: var(--miku-green); color: white; }
+    .email-chip:hover { background: var(--miku-green); color: white; transform: translateX(-5px); }
 
     /* 📱 移动端适配 */
     @media (max-width: 600px) {
-      .player-card { width: 170px !important; left: 10px !important; bottom: 10px !important; padding: 8px !important; }
-      .contact-panel { right: 10px !important; bottom: 10px !important; gap: 4px !important; }
-      .email-chip { padding: 5px 10px !important; font-size: 8px !important; }
+      .player-card { 
+        width: 175px !important; 
+        left: 10px !important; 
+        bottom: 10px !important; 
+        padding: 8px !important;
+        gap: 8px !important;
+      }
       .album-cover { width: 35px !important; height: 35px !important; }
+      .song-name { font-size: 10.5px !important; }
+      .play-pause { width: 28px !important; height: 28px !important; font-size: 10px !important; }
+
+      .contact-panel { 
+        right: 10px !important; 
+        bottom: 10px !important; 
+        gap: 4px !important;
+      }
+      .email-chip { padding: 5px 10px !important; font-size: 8.5px !important; border-radius: 8px; }
       .hero h1 { font-size: 3.2rem !important; }
+      .nav-tag { display: none; } /* 手机端隐藏标签，保持整洁 */
     }
 
     /* 动画 */
@@ -174,8 +194,6 @@ const title = "TQSY's Space";
     @keyframes fadeIn { to { opacity: 1; } }
     @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes navStagger { to { opacity: 1; transform: translateY(0); } }
-    @keyframes bounce { from { height: 4px; } to { height: 12px; } }
-    @keyframes pulseBg { from { opacity: 0.5; transform: scale(1); } to { opacity: 1; transform: scale(1.1); } }
   </style>
 </head>
 <body>
@@ -189,22 +207,40 @@ const title = "TQSY's Space";
 
   <div class="container">
     <div class="nav-list" id="navList">
-      <a href="https://github.com/TQSY114514" class="nav-item"><span>GitHub</span> <span>→</span></a>
-      <a href="https://shequ.codemao.cn/user/1574587147" class="nav-item"><span>编程猫 (Codemao)</span> <span>→</span></a>
-      <a href="https://luogu.com.cn/user/1849345" class="nav-item"><span>(洛谷)Luogu</span> <span>→</span></a>
-      <a href="https://space.bilibili.com/1180124107" class="nav-item"><span>Bilibili</span> <span>→</span></a>
-      <a href="https://x.com/TianY43737" class="nav-item"><span>X (Twitter)</span> <span>→</span></a>
-      <a href="https://www.instagram.com/tqsy114514/" class="nav-item"><span>Instagram</span> <span>→</span></a>
-      <a href="https://www.facebook.com/profile.php?id=61577768467133" class="nav-item"><span>Facebook</span> <span>→</span></a>
+      <a href="https://github.com/TQSY114514" class="nav-item">
+        <span>GitHub</span> 
+        <span><span class="nav-tag">开源之路</span> →</span>
+      </a>
+      <a href="https://shequ.codemao.cn/user/1574587147" class="nav-item">
+        <span>编程猫 (Codemao)</span> 
+        <span><span class="nav-tag">初露锋芒</span> →</span>
+      </a>
+      <a href="https://luogu.com.cn/user/1849345" class="nav-item">
+        <span>Luogu</span> 
+        <span><span class="nav-tag">算法修行</span> →</span>
+      </a>
+      <a href="https://space.bilibili.com/1180124107" class="nav-item">
+        <span>Bilibili</span> 
+        <span>→</span>
+      </a>
+      <a href="https://x.com/TianY43737" class="nav-item">
+        <span>X (Twitter)</span> 
+        <span>→</span>
+      </a>
+      <a href="https://www.instagram.com/tqsy114514/" class="nav-item">
+        <span>Instagram</span> 
+        <span>→</span>
+      </a>
+      <a href="https://www.facebook.com/profile.php?id=61577768467133" class="nav-item">
+        <span>Facebook</span> 
+        <span>→</span>
+      </a>
     </div>
   </div>
 
   <div class="player-card" id="playerCard">
-    <img src="https://cdn.phototourl.com/free/2026-04-11-eee19110-0750-4557-be87-830a17b948b5.jpg" class="album-cover" alt="Miku">
+    <img src="https://cdn.phototourl.com/free/2026-04-11-eee19110-0750-4557-be87-830a17b948b5.jpg" class="album-cover" alt="Miku Cover">
     <div class="song-info">
-      <div class="visualizer">
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-      </div>
       <div class="song-name">橙交差点</div>
       <div class="song-artist">初音ミク</div>
     </div>
@@ -222,18 +258,18 @@ const title = "TQSY's Space";
   </div>
 
   <script is:inline>
-    // 列表入场
+    // 列表错峰入场
     const items = document.querySelectorAll('.nav-item');
     items.forEach((item, index) => {
       item.style.animation = `navStagger 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${0.5 + index * 0.1}s forwards`;
     });
 
-    // 播放逻辑
     const audio = document.getElementById('mainAudio');
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
 
-    playBtn.onclick = () => {
+    playBtn.onclick = (e) => {
+      e.stopPropagation();
       if (audio.paused) {
         audio.play().then(() => {
           playBtn.innerText = "⏸";
@@ -246,18 +282,10 @@ const title = "TQSY's Space";
       }
     };
 
-    // 滚动反馈
     window.onscroll = () => {
+      // 触底显示邮箱
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 120;
       document.body.classList.toggle('is-bottom', isBottom);
-    };
-
-    // 背景随鼠标轻微移动
-    window.onmousemove = (e) => {
-      const x = (e.clientX / window.innerWidth) * 100;
-      const y = (e.clientY / window.innerHeight) * 100;
-      document.body.style.setProperty('--mouse-x', x + '%');
-      document.body.style.setProperty('--mouse-y', y + '%');
     };
   </script>
 </body>
