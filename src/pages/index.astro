@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 终极完美版 (极简美学 + 交互优化)
+// TQSY's Space - 极致纯净版 (移除标签，保留全部交互优化)
 const title = "TQSY's Space";
 ---
 
@@ -18,15 +18,10 @@ const title = "TQSY's Space";
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* 基础重置与隐藏滚动条 */
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-      -webkit-font-smoothing: antialiased; 
-    }
+    /* 基础重置 */
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
     
-    /* 隐藏系统滚动条，保持极致简洁 */
+    /* 隐藏滚动条 */
     ::-webkit-scrollbar { width: 0px; height: 0px; }
 
     body { 
@@ -75,8 +70,8 @@ const title = "TQSY's Space";
       animation: fadeIn 1s var(--ease) 0.8s forwards;
     }
 
-    /* 导航列表 */
-    .container { max-width: 520px; margin: 0 auto; padding: 0 20px 250px 20px; }
+    /* 导航列表 - 极致纯净态 */
+    .container { max-width: 500px; margin: 0 auto; padding: 0 20px 250px 20px; }
     .nav-item { 
       display: flex; 
       align-items: center; 
@@ -100,18 +95,9 @@ const title = "TQSY's Space";
       border-color: var(--miku-green);
       box-shadow: 0 10px 30px rgba(0,207,181,0.1);
     }
-    /* 点击时的微小反馈 */
     .nav-item:active {
       transform: scale(0.97);
       background: rgba(0, 207, 181, 0.05);
-    }
-    
-    .nav-tag {
-      font-size: 10px;
-      font-weight: 400;
-      color: var(--text-gray);
-      margin-right: 8px;
-      opacity: 0.6;
     }
 
     /* 播放器卡片 */
@@ -176,15 +162,13 @@ const title = "TQSY's Space";
       .album-cover { width: 35px !important; height: 35px !important; }
       .song-name { font-size: 10.5px !important; }
       .play-pause { width: 28px !important; height: 28px !important; font-size: 10px !important; }
-
       .contact-panel { 
         right: 10px !important; 
         bottom: 10px !important; 
         gap: 4px !important;
       }
-      .email-chip { padding: 5px 10px !important; font-size: 8.5px !important; border-radius: 8px; }
+      .email-chip { padding: 5px 10px !important; font-size: 8.5px !important; }
       .hero h1 { font-size: 3.2rem !important; }
-      .nav-tag { display: none; } /* 手机端隐藏标签，保持整洁 */
     }
 
     /* 动画 */
@@ -207,34 +191,13 @@ const title = "TQSY's Space";
 
   <div class="container">
     <div class="nav-list" id="navList">
-      <a href="https://github.com/TQSY114514" class="nav-item">
-        <span>GitHub</span> 
-        <span><span class="nav-tag">开源之路</span> →</span>
-      </a>
-      <a href="https://shequ.codemao.cn/user/1574587147" class="nav-item">
-        <span>编程猫 (Codemao)</span> 
-        <span><span class="nav-tag">初露锋芒</span> →</span>
-      </a>
-      <a href="https://luogu.com.cn/user/1849345" class="nav-item">
-        <span>Luogu</span> 
-        <span><span class="nav-tag">算法修行</span> →</span>
-      </a>
-      <a href="https://space.bilibili.com/1180124107" class="nav-item">
-        <span>Bilibili</span> 
-        <span>→</span>
-      </a>
-      <a href="https://x.com/TianY43737" class="nav-item">
-        <span>X (Twitter)</span> 
-        <span>→</span>
-      </a>
-      <a href="https://www.instagram.com/tqsy114514/" class="nav-item">
-        <span>Instagram</span> 
-        <span>→</span>
-      </a>
-      <a href="https://www.facebook.com/profile.php?id=61577768467133" class="nav-item">
-        <span>Facebook</span> 
-        <span>→</span>
-      </a>
+      <a href="https://github.com/TQSY114514" class="nav-item"><span>GitHub</span> <span>→</span></a>
+      <a href="https://shequ.codemao.cn/user/1574587147" class="nav-item"><span>编程猫 (Codemao)</span> <span>→</span></a>
+      <a href="https://luogu.com.cn/user/1849345" class="nav-item"><span>Luogu</span> <span>→</span></a>
+      <a href="https://space.bilibili.com/1180124107" class="nav-item"><span>Bilibili</span> <span>→</span></a>
+      <a href="https://x.com/TianY43737" class="nav-item"><span>X (Twitter)</span> <span>→</span></a>
+      <a href="https://www.instagram.com/tqsy114514/" class="nav-item"><span>Instagram</span> <span>→</span></a>
+      <a href="https://www.facebook.com/profile.php?id=61577768467133" class="nav-item"><span>Facebook</span> <span>→</span></a>
     </div>
   </div>
 
@@ -258,7 +221,6 @@ const title = "TQSY's Space";
   </div>
 
   <script is:inline>
-    // 列表错峰入场
     const items = document.querySelectorAll('.nav-item');
     items.forEach((item, index) => {
       item.style.animation = `navStagger 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${0.5 + index * 0.1}s forwards`;
@@ -283,7 +245,6 @@ const title = "TQSY's Space";
     };
 
     window.onscroll = () => {
-      // 触底显示邮箱
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 120;
       document.body.classList.toggle('is-bottom', isBottom);
     };
