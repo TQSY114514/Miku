@@ -2,7 +2,7 @@
 // TQSY's Space - 极致纯净终极完全体
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
-// 全局图标与分享封面（使用最新直链）
+// 全局统一图标与头像直链
 const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cfa-843a-e8ba865c9b46.webp";
 ---
 
@@ -67,6 +67,18 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       align-items: center; 
       animation: heroUp 1.2s var(--ease) 0.2s both;
     }
+    
+    /* ✨ 新增优化：给大头像加上精致的苹果风暗阴影与完美的圆形裁剪 */
+    .hero-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+      margin-bottom: 15px;
+    }
+
     .hero h1 { 
       font-size: clamp(3rem, 10vw, 6rem); 
       font-weight: 800; 
@@ -207,6 +219,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
   <div class="bg-glow"></div>
 
   <section class="hero">
+    <img src={globalIcon} class="hero-avatar" alt="Avatar">
     <h1>{title}</h1>
     <p class="hero-sub">Weather Holy Salt · TQSY</p>
   </section>
