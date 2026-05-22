@@ -1,8 +1,9 @@
 ---
-// TQSY's Space - 极致纯净优化版
+// TQSY's Space - 极致纯净终极完全体
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
-const coverImage = "https://cdn.phototourl.com/free/2026-04-11-eee19110-0750-4557-be87-830a17b948b5.jpg"; // 用 Miku 的图片做分享封面
+// 统一的全局图标与分享封面（唱片封面单独在下方保留了原图）
+const globalIcon = "https://revolutionary-brown-qrb0skio8v.edgeone.app/1770018495482.jpg";
 ---
 
 <html lang="zh-CN">
@@ -11,10 +12,16 @@ const coverImage = "https://cdn.phototourl.com/free/2026-04-11-eee19110-0750-455
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>{title}</title>
   
+  <meta name="theme-color" content="#fcfcfc" />
+  
+  <link rel="icon" href={globalIcon} />
+  
+  <link rel="apple-touch-icon" href={globalIcon} />
+
   <meta name="description" content={description} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" content={coverImage} />
+  <meta property="og:image" content={globalIcon} />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
 
