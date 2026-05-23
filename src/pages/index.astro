@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 100.01% 究极封神版 (播放键绝对居中修复版)
+// TQSY's Space - 100.01% 究极封神版 (滚动进度物理绑定版)
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
 const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cfa-843a-e8ba865c9b46.webp";
@@ -155,18 +155,26 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     }
     body.is-bottom .contact-panel { pointer-events: auto; }
 
+    /* ✨ 核心重构：利用 CSS 变量承接 JS 的物理滚动值 */
     .email-chip { 
+      --chip-x: 40px;
+      --chip-op: 0;
       background: var(--glass); padding: 8px 16px; border-radius: 50px; font-size: 10px; 
       color: var(--text-gray); border: 1px solid var(--glass-border); text-decoration: none; font-family: monospace; 
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      opacity: 0; transform: translateX(40px);
-      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), background 0.3s, color 0.3s, border 0.3s;
+      
+      transform: translateX(var(--chip-x));
+      opacity: var(--chip-op);
+      
+      /* ✨ 抽离 transform 和 opacity 的 transition，让位给绝对无延迟的滚动计算 */
+      transition: background 0.3s, color 0.3s, border 0.3s;
       will-change: transform, opacity;
       user-select: none; -webkit-user-select: none;
     }
-    body.is-bottom .email-chip { opacity: 1; transform: translateX(0); }
-    body.is-bottom .email-chip:hover { 
-      background: var(--miku-green); color: white; border-color: var(--miku-green); transform: translateX(-5px); 
+    .email-chip:hover { 
+      background: var(--miku-green); color: white; border-color: var(--miku-green); 
+      /* 在 JS 计算出的当前位置基础上，再减去 5px 形成物理回弹 */
+      transform: translateX(calc(var(--chip-x) - 5px)); 
     }
 
     @media (max-width: 600px) {
@@ -191,7 +199,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
         transition-duration: 0.01ms !important; scroll-behavior: auto !important;
       }
       .nav-item { opacity: 1; transform: translateY(0); }
-      .email-chip { opacity: 1; transform: translateX(0); transition-delay: 0s !important; }
+      .email-chip { opacity: 1; transform: translateX(0) !important; }
       body.is-idle .bg-glow { animation: none !important; } 
     }
   </style>
@@ -257,6 +265,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
+    // 静止态检测逻辑
     let idleTimer;
     const resetIdleTimer = () => {
       document.body.classList.remove('is-idle');
@@ -265,12 +274,12 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
         idleTimer = setTimeout(() => { document.body.classList.add('is-idle'); }, 5000); 
       }
     };
-    
     ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'].forEach(evt => 
       window.addEventListener(evt, resetIdleTimer, { passive: true })
     );
     resetIdleTimer();
 
+    // 瀑布流揭示逻辑
     const items = document.querySelectorAll('.nav-item');
     const itemsArray = Array.from(items); 
     let staggerDelay = 0;
@@ -278,11 +287,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
 
     const observer = new IntersectionObserver((entries) => {
       const visibleEntries = entries.filter(entry => entry.isIntersecting);
-      
-      visibleEntries.sort((a, b) => {
-        return itemsArray.indexOf(a.target) - itemsArray.indexOf(b.target);
-      });
-
+      visibleEntries.sort((a, b) => itemsArray.indexOf(a.target) - itemsArray.indexOf(b.target));
       visibleEntries.forEach((entry) => {
         if (prefersReducedMotion) {
           entry.target.classList.add('show');
@@ -292,15 +297,14 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
         }
         observer.unobserve(entry.target);
       });
-
       if (visibleEntries.length > 0 && !prefersReducedMotion) {
         clearTimeout(resetTimer);
         resetTimer = setTimeout(() => { staggerDelay = 0; }, 300);
       }
     }, { threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
-
     items.forEach(item => observer.observe(item));
 
+    // 播放器逻辑
     const audio = document.getElementById('mainAudio');
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
@@ -308,26 +312,72 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     playBtn.onclick = (e) => {
       e.stopPropagation();
       if (audio.paused) {
-        audio.play().then(() => {
-          playerCard.classList.add('is-playing');
-        });
+        audio.play().then(() => { playerCard.classList.add('is-playing'); });
       } else {
         audio.pause();
         playerCard.classList.remove('is-playing');
       }
     };
 
+    // ✨ 核心重构：滚动物理绑定逻辑 (Scrubbing)
     const emailChips = document.querySelectorAll('.email-chip');
-    emailChips.forEach((chip, index) => {
-      if (!prefersReducedMotion) {
-        chip.style.transitionDelay = `${index * 0.1}s`;
+    
+    const updateScrollProgress = () => {
+      const maxScroll = document.body.offsetHeight - window.innerHeight;
+      
+      // 如果屏幕高度过大无需滚动，则直接呈现完整状态
+      if (maxScroll <= 0) {
+        emailChips.forEach(chip => {
+          chip.style.setProperty('--chip-x', '0px');
+          chip.style.setProperty('--chip-op', '1');
+        });
+        document.body.classList.add('is-bottom');
+        return;
       }
-    });
 
-    window.onscroll = () => {
-      const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 120;
-      document.body.classList.toggle('is-bottom', isBottom);
+      // 设定在最后 250px 距离时开始滑动动画
+      const triggerZone = 250;
+      const startScroll = maxScroll - triggerZone;
+      const currentScroll = window.scrollY;
+
+      // 计算整体滚动进度 (0 到 1)
+      let progress = 0;
+      if (currentScroll >= startScroll) {
+        progress = (currentScroll - startScroll) / triggerZone;
+      }
+      progress = Math.max(0, Math.min(1, progress));
+
+      document.body.classList.toggle('is-bottom', progress > 0);
+
+      emailChips.forEach((chip, index) => {
+        if (prefersReducedMotion) {
+          chip.style.setProperty('--chip-x', '0px');
+          chip.style.setProperty('--chip-op', '1');
+          return;
+        }
+
+        // 利用错位延迟，实现“依次展开”的阶梯感
+        const stagger = 0.15;
+        const delay = index * stagger;
+        
+        // 重新映射每个卡片的局部进度
+        let chipProgress = Math.max(0, progress - delay) / (1 - stagger * 3);
+        chipProgress = Math.max(0, Math.min(1, chipProgress));
+
+        // 物理缓动曲线 (Ease Out)，让划动时的阻尼感更高级
+        const easeOut = 1 - Math.pow(1 - chipProgress, 2);
+
+        // 注入实时物理参数给 CSS 变量
+        chip.style.setProperty('--chip-x', `${40 * (1 - easeOut)}px`);
+        chip.style.setProperty('--chip-op', easeOut);
+      });
     };
+
+    // 绑定高性能滚动监听
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    window.addEventListener('resize', updateScrollProgress, { passive: true });
+    updateScrollProgress(); // 初始化计算
+
   </script>
 </body>
 </html>
