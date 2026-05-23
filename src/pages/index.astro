@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 100.01% 究极封神版 (GitHub 小猫开源页脚版)
+// TQSY's Space - 100.01% 究极封神版 (彻底修复极限手速幽灵漏测 Bug)
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
 const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cfa-843a-e8ba865c9b46.webp";
@@ -121,7 +121,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     .nav-item.show:hover span { color: var(--miku-green); }
     .nav-item.show:active { transform: scale(0.97); background: var(--glass-hover); }
 
-    /* ✨ 极客开源页脚样式 */
     .source-footer {
       text-align: center;
       margin-top: 50px;
@@ -129,23 +128,12 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       animation: fadeIn 1.5s var(--ease) 1s forwards;
     }
     .source-footer a {
-      /* ✨ 使用 inline-flex 保证图标和文字完美居中对齐 */
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-size: 11px;
-      color: var(--text-gray);
-      text-decoration: none;
-      letter-spacing: 0.05em;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      font-size: 11px; color: var(--text-gray); text-decoration: none; letter-spacing: 0.05em;
       transition: color 0.3s var(--ease), opacity 0.3s var(--ease);
-      user-select: none; -webkit-user-select: none;
-      opacity: 0.6;
+      user-select: none; -webkit-user-select: none; opacity: 0.6;
     }
-    .source-footer a:hover {
-      color: var(--miku-green);
-      opacity: 1;
-    }
+    .source-footer a:hover { color: var(--miku-green); opacity: 1; }
 
     .player-card { 
       position: fixed; left: 25px; bottom: 25px; width: 300px; padding: 12px; 
@@ -316,22 +304,33 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     let resetTimer = null;
 
     const observer = new IntersectionObserver((entries) => {
-      const visibleEntries = entries.filter(entry => entry.isIntersecting);
+      // ✨ 核心修复：物理位置判定，只要被划过去（即使跳帧）也绝对不会漏掉
+      const visibleEntries = entries.filter(entry => 
+        entry.isIntersecting || entry.boundingClientRect.top < window.innerHeight
+      );
+      
+      if (visibleEntries.length === 0) return;
+
       visibleEntries.sort((a, b) => itemsArray.indexOf(a.target) - itemsArray.indexOf(b.target));
+
       visibleEntries.forEach((entry) => {
-        if (prefersReducedMotion) {
-          entry.target.classList.add('show');
-        } else {
-          setTimeout(() => { entry.target.classList.add('show'); }, staggerDelay);
-          staggerDelay += 100; 
+        if (!entry.target.classList.contains('show')) {
+          if (prefersReducedMotion) {
+            entry.target.classList.add('show');
+          } else {
+            setTimeout(() => { entry.target.classList.add('show'); }, staggerDelay);
+            staggerDelay += 80; // 调紧凑到 80ms，完美承接你的无影手滑动
+          }
+          observer.unobserve(entry.target);
         }
-        observer.unobserve(entry.target);
       });
-      if (visibleEntries.length > 0 && !prefersReducedMotion) {
+
+      if (!prefersReducedMotion) {
         clearTimeout(resetTimer);
         resetTimer = setTimeout(() => { staggerDelay = 0; }, 300);
       }
-    }, { threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
+    }, { threshold: 0, rootMargin: "0px 0px -50px 0px" });
+
     items.forEach(item => observer.observe(item));
 
     const audio = document.getElementById('mainAudio');
