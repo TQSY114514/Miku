@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 100.01% 究极封神版 (彻底修复极限手速幽灵漏测 Bug)
+// TQSY's Space - Cyber Digital Identity 版 (分区重构 + 性能瘦身)
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
 const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cfa-843a-e8ba865c9b46.webp";
@@ -61,7 +61,8 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     body { 
       background-color: var(--bg-white); color: var(--text-dark); 
       font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "SF Pro Text", sans-serif; 
-      overflow-x: hidden; opacity: 0; animation: fadeInBody 1.5s var(--ease) forwards;
+      overflow-x: hidden;
+      /* ⚡ 修复首屏白闪：移除 body opacity 动画 */
       transition: background-color 0.5s var(--ease), color 0.5s var(--ease);
     }
 
@@ -70,23 +71,22 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       background: radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.1) 0%, transparent 40%); 
       z-index: -1; pointer-events: none;
       transition: transform 3s var(--ease), opacity 3s var(--ease);
-      will-change: transform, opacity;
+      /* ⚡ 性能优化：移除不必要的 will-change */
     }
 
     @keyframes ambientBreathe {
       0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.6; }
       50% { transform: scale(1.1) translate(-2%, 2%); opacity: 1; }
     }
-    
     body.is-idle .bg-glow { animation: ambientBreathe 8s infinite ease-in-out; }
 
-    .nav-list { transition: opacity 1.5s ease-in-out, filter 1.5s ease-in-out; will-change: opacity, filter; }
+    .nav-list { transition: opacity 1.5s ease-in-out, filter 1.5s ease-in-out; }
     body.is-idle .nav-list { opacity: 0.35; filter: blur(1.5px); }
     body.is-idle .nav-list:hover { opacity: 1; filter: blur(0); }
 
     .hero { 
       height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; 
-      animation: heroUp 1.2s var(--ease) 0.2s both; will-change: transform;
+      animation: heroUp 1.2s var(--ease) 0.2s both;
       user-select: none; -webkit-user-select: none;
     }
     .hero h1 { 
@@ -94,7 +94,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       background: linear-gradient(var(--text-dark), var(--text-gray)); 
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
       filter: blur(10px); text-shadow: 0 0 30px rgba(0,0,0,0.02);
-      animation: unblur 1.2s var(--ease) 0.3s both; will-change: filter;
+      animation: unblur 1.2s var(--ease) 0.3s both;
     }
     .hero-sub { 
       color: var(--text-gray); letter-spacing: 0.3em; text-transform: uppercase; 
@@ -103,13 +103,28 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
 
     .container { max-width: 500px; margin: 0 auto; padding: 0 20px 250px 20px; }
     
+    /* ✨ 新增：分类标题样式，构建信息层级 */
+    .category-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-gray);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin: 40px 0 16px 12px;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    }
+    .category-title.show { opacity: 0.8; transform: translateY(0); }
+
     .nav-item { 
       display: flex; align-items: center; justify-content: space-between; 
-      padding: 22px 28px; background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      /* ⚡ GPU减负：统一降级到 blur(12px) */
+      padding: 22px 28px; background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--glass-border); border-radius: 24px; text-decoration: none; 
       color: var(--text-dark); font-weight: 600; margin-bottom: 16px; 
       opacity: 0; transform: translateY(30px);
       transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), background-color 0.5s var(--ease);
+      /* ⚡ 性能优化：仅保留高频动画元素的 will-change */
       will-change: transform, opacity;
       user-select: none; -webkit-user-select: none;
     }
@@ -119,6 +134,285 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       transform: translateY(-4px); border-color: var(--miku-green); box-shadow: 0 10px 30px rgba(0,207,181,0.1);
     }
     .nav-item.show:hover span { color: var(--miku-green); }
+    .nav-item.show:active { transform: scale(0.97); background: var(--glass-hover); }
+
+    .source-footer {
+      text-align: center; margin-top: 60px; opacity: 0; animation: fadeIn 1.5s var(--ease) 1s forwards;
+    }
+    .source-footer a {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      font-size: 11px; color: var(--text-gray); text-decoration: none; letter-spacing: 0.05em;
+      transition: color 0.3s var(--ease), opacity 0.3s var(--ease);
+      user-select: none; -webkit-user-select: none; opacity: 0.6;
+    }
+    .source-footer a:hover { color: var(--miku-green); opacity: 1; }
+
+    .player-card { 
+      position: fixed; left: 25px; bottom: 25px; width: 300px; padding: 12px; 
+      /* ⚡ GPU减负：降级到 blur(12px) */
+      background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px; border: 1px solid rgba(0,207,181,0.2); 
+      display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
+      z-index: 1000; opacity: 0; animation: slideInLeft 1.2s var(--ease) 1s forwards;
+      transition: background-color 0.5s var(--ease); 
+      will-change: transform, opacity;
+      user-select: none; -webkit-user-select: none;
+    }
+    .album-cover { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; transition: 0.4s var(--ease); pointer-events: none; }
+    .is-playing .album-cover { box-shadow: 0 0 20px rgba(0,207,181,0.3); transform: scale(1.05); }
+
+    .song-info { flex: 1; overflow: hidden; }
+    .song-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-artist { font-size: 11px; color: var(--miku-green); }
+    
+    .play-pause { 
+      width: 34px; height: 34px; background: var(--text-dark); color: var(--bg-white); 
+      border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: 0.3s;
+    }
+    .play-pause:active { transform: scale(0.85); }
+    
+    .play-pause svg { width: 14px; height: 14px; fill: currentColor; }
+    #icon-pause { display: none; }
+    .is-playing #icon-play { display: none; }
+    .is-playing #icon-pause { display: block; }
+
+    .contact-panel { 
+      position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; 
+      align-items: flex-end; gap: 8px; z-index: 1001; pointer-events: none; 
+    }
+    body.is-bottom .contact-panel { pointer-events: auto; }
+
+    .email-chip { 
+      --chip-x: 40px;
+      --chip-op: 0;
+      /* ⚡ GPU减负：降级到 blur(12px) */
+      background: var(--glass); padding: 8px 16px; border-radius: 50px; font-size: 10px; 
+      color: var(--text-gray); border: 1px solid var(--glass-border); text-decoration: none; font-family: monospace; 
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      
+      transform: translateX(var(--chip-x)); opacity: var(--chip-op);
+      transition: background 0.3s, color 0.3s, border 0.3s;
+      user-select: none; -webkit-user-select: none;
+    }
+    .email-chip:hover { 
+      background: var(--miku-green); color: white; border-color: var(--miku-green); 
+      transform: translateX(calc(var(--chip-x) - 5px)); 
+    }
+
+    @media (max-width: 600px) {
+      .player-card { width: 175px !important; left: 10px !important; bottom: 10px !important; padding: 8px !important; gap: 8px !important; }
+      .album-cover { width: 35px !important; height: 35px !important; }
+      .song-name { font-size: 10.5px !important; }
+      .play-pause { width: 28px !important; height: 28px !important; }
+      .contact-panel { right: 10px !important; bottom: 10px !important; gap: 4px !important; }
+      .email-chip { padding: 5px 10px !important; font-size: 8.5px !important; }
+      .hero h1 { font-size: 3.2rem !important; }
+    }
+
+    @keyframes heroUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes unblur { to { filter: blur(0); } }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important; scroll-behavior: auto !important;
+      }
+      .nav-item, .category-title { opacity: 1; transform: translateY(0); }
+      .email-chip { opacity: 1; transform: translateX(0) !important; }
+      body.is-idle .bg-glow { animation: none !important; } 
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow"></div>
+
+  <section class="hero">
+    <h1>{title}</h1>
+    <p class="hero-sub">Weather Holy Salt · TQSY</p>
+  </section>
+
+  <div class="container">
+    <div class="nav-list" id="navList">
+      
+      <div class="category-title">💻 Code & Dev</div>
+      <a href="https://github.com/TQSY114514" target="_blank" rel="noopener noreferrer" class="nav-item"><span>GitHub</span> <span>→</span></a>
+      <a href="https://luogu.com.cn/user/1849345" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Luogu</span> <span>→</span></a>
+      <a href="https://www.ioicode.com/user/54562" target="_blank" rel="noopener noreferrer" class="nav-item"><span>IOI Code</span> <span>→</span></a>
+      <a href="https://shequ.codemao.cn/user/1574587147" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Codemao</span> <span>→</span></a>
+
+      <div class="category-title">🎮 Gaming</div>
+      <a href="https://steamcommunity.com/profiles/76561199885694539/" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Steam</span> <span>→</span></a>
+      <a href="https://store.epicgames.com/u/534df435083b40dbb61f5d929ed60353" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Epic Games</span> <span>→</span></a>
+      <a href="https://www.xbox.com/en-SG/play/user/TQSY9851" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Xbox</span> <span>→</span></a>
+      
+      <div class="category-title">🌸 Social & ACG</div>
+      <a href="https://bangumi.tv/user/tqsy114514" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Bangumi</span> <span>→</span></a>
+      <a href="https://space.bilibili.com/1180124107" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Bilibili</span> <span>→</span></a>
+      <a href="https://x.com/TianY43737" target="_blank" rel="noopener noreferrer" class="nav-item"><span>X (Twitter)</span> <span>→</span></a>
+      <a href="https://www.instagram.com/tqsy114514/" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Instagram</span> <span>→</span></a>
+      <a href="https://www.touchgal.ink/user/383045/comment" target="_blank" rel="noopener noreferrer" class="nav-item"><span>TouchGal</span> <span>→</span></a>
+      <a href="https://www.facebook.com/profile.php?id=61577768467133" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Facebook</span> <span>→</span></a>
+      <a href="https://www.nuomill.com/user/2649" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Nuomill</span> <span>→</span></a>
+    </div>
+
+    <div class="source-footer">
+      <a href="https://github.com/TQSY114514/tqsy114514" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+        </svg>
+        <span>Open-source on GitHub</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="player-card" id="playerCard">
+    <img src="https://cdn.phototourl.com/free/2026-04-11-eee19110-0750-4557-be87-830a17b948b5.jpg" class="album-cover" alt="Miku Cover" width="50" height="50" decoding="async">
+    <div class="song-info">
+      <div class="song-name">橙交差点</div>
+      <div class="song-artist">初音ミク</div>
+    </div>
+    <button class="play-pause" id="playBtn" aria-label="播放或暂停背景音乐">
+      <svg id="icon-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="icon-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+    <audio id="mainAudio" loop preload="metadata">
+      <source src="https://videotourl.com/audio/1775904309738-ed28bd2b-7261-4bb9-8cab-1ed6c1b5b0c9.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <div class="contact-panel" id="contactPanel">
+    <a href="mailto:tqishengyan@gmail.com" class="email-chip">tqishengyan@gmail.com</a>
+    <a href="mailto:3635316905@qq.com" class="email-chip">3635316905@qq.com</a>
+    <a href="mailto:tianqishengyan_zhj@163.com" class="email-chip">tianqishengyan_zhj@163.com</a>
+    <a href="mailto:tianqishengyan_zhj@outlook.com" class="email-chip">tianqishengyan_zhj@outlook.com</a>
+  </div>
+
+  <script is:inline>
+    console.log(
+      "%c ✨ TQSY's Space %c 100% Handcrafted | Weather Holy Salt ", 
+      "color: white; background: #1d1d1f; padding: 6px 10px; border-radius: 4px 0 0 4px; font-weight: bold;", 
+      "color: white; background: #00cfb5; padding: 6px 10px; border-radius: 0 4px 4px 0; font-weight: bold;"
+    );
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    let idleTimer;
+    const resetIdleTimer = () => {
+      document.body.classList.remove('is-idle');
+      clearTimeout(idleTimer);
+      if (!prefersReducedMotion) {
+        idleTimer = setTimeout(() => { document.body.classList.add('is-idle'); }, 5000); 
+      }
+    };
+    ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'].forEach(evt => 
+      window.addEventListener(evt, resetIdleTimer, { passive: true })
+    );
+    resetIdleTimer();
+
+    // ✨ 修复：连同新增加的分类标题一起纳入排队动画队列
+    const items = document.querySelectorAll('.nav-item, .category-title');
+    const itemsArray = Array.from(items); 
+    let staggerDelay = 0;
+    let resetTimer = null;
+
+    const observer = new IntersectionObserver((entries) => {
+      const visibleEntries = entries.filter(entry => 
+        entry.isIntersecting || entry.boundingClientRect.top < window.innerHeight
+      );
+      if (visibleEntries.length === 0) return;
+
+      visibleEntries.sort((a, b) => itemsArray.indexOf(a.target) - itemsArray.indexOf(b.target));
+
+      visibleEntries.forEach((entry) => {
+        if (!entry.target.classList.contains('show')) {
+          if (prefersReducedMotion) {
+            entry.target.classList.add('show');
+          } else {
+            setTimeout(() => { entry.target.classList.add('show'); }, staggerDelay);
+            staggerDelay += 80; 
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+
+      if (!prefersReducedMotion) {
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => { staggerDelay = 0; }, 300);
+      }
+    }, { threshold: 0, rootMargin: "0px 0px -50px 0px" });
+    items.forEach(item => observer.observe(item));
+
+    const audio = document.getElementById('mainAudio');
+    const playBtn = document.getElementById('playBtn');
+    const playerCard = document.getElementById('playerCard');
+
+    playBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (audio.paused) {
+        audio.play().then(() => { playerCard.classList.add('is-playing'); });
+      } else {
+        audio.pause();
+        playerCard.classList.remove('is-playing');
+      }
+    };
+
+    const emailChips = document.querySelectorAll('.email-chip');
+    
+    const updateScrollProgress = () => {
+      const maxScroll = document.body.offsetHeight - window.innerHeight;
+      
+      if (maxScroll <= 0) {
+        emailChips.forEach(chip => {
+          chip.style.setProperty('--chip-x', '0px');
+          chip.style.setProperty('--chip-op', '1');
+        });
+        document.body.classList.add('is-bottom');
+        return;
+      }
+
+      const triggerZone = 250;
+      const startScroll = maxScroll - triggerZone;
+      const currentScroll = window.scrollY;
+
+      let progress = 0;
+      if (currentScroll >= startScroll) {
+        progress = (currentScroll - startScroll) / triggerZone;
+      }
+      progress = Math.max(0, Math.min(1, progress));
+
+      document.body.classList.toggle('is-bottom', progress > 0);
+
+      emailChips.forEach((chip, index) => {
+        if (prefersReducedMotion) {
+          chip.style.setProperty('--chip-x', '0px');
+          chip.style.setProperty('--chip-op', '1');
+          return;
+        }
+
+        const stagger = 0.15;
+        const delay = index * stagger;
+        
+        let chipProgress = Math.max(0, progress - delay) / (1 - stagger * 3);
+        chipProgress = Math.max(0, Math.min(1, chipProgress));
+
+        const easeOut = 1 - Math.pow(1 - chipProgress, 2);
+
+        chip.style.setProperty('--chip-x', `${40 * (1 - easeOut)}px`);
+        chip.style.setProperty('--chip-op', easeOut);
+      });
+    };
+
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    window.addEventListener('resize', updateScrollProgress, { passive: true });
+    updateScrollProgress(); 
+
+  </script>
+</body>
+</html>
     .nav-item.show:active { transform: scale(0.97); background: var(--glass-hover); }
 
     .source-footer {
