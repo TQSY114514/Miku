@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 极致纯净无障碍完全体 (侧滑面板版)
+// TQSY's Space - 极致纯净无障碍完全体 (滚动揭示版)
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
 // 全局统一图标与分享封面直链
@@ -84,6 +84,8 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     }
 
     .container { max-width: 500px; margin: 0 auto; padding: 0 20px 250px 20px; }
+    
+    /* ✨ 核心优化：导航项的基础状态变为透明+下沉 */
     .nav-item { 
       display: flex; 
       align-items: center; 
@@ -97,18 +99,27 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       color: var(--text-dark); 
       font-weight: 600; 
       margin-bottom: 16px; 
-      transition: all 0.4s var(--ease);
+      /* 初始状态：隐藏并下移 */
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(30px);
+      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
     }
     .nav-item span { transition: color 0.4s var(--ease); }
-    .nav-item:hover { 
+    
+    /* 当 JS 监听到滚动，赋予 .show 类名时，元素浮现 */
+    .nav-item.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* 悬停效果 (仅在元素显示后生效) */
+    .nav-item.show:hover { 
       transform: translateY(-4px); 
       border-color: var(--miku-green);
       box-shadow: 0 10px 30px rgba(0,207,181,0.1);
     }
-    .nav-item:hover span { color: var(--miku-green); }
-    .nav-item:active { transform: scale(0.97); background: rgba(0, 207, 181, 0.05); }
+    .nav-item.show:hover span { color: var(--miku-green); }
+    .nav-item.show:active { transform: scale(0.97); background: rgba(0, 207, 181, 0.05); }
 
     .player-card { 
       position: fixed; 
@@ -142,18 +153,17 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     }
     .play-pause:active { transform: scale(0.85); }
 
-    /* ✨ 核心优化：改成从右侧滑出 (translateX) */
     .contact-panel { 
       position: fixed; right: 25px; bottom: 25px; 
       display: flex; flex-direction: column; 
       align-items: flex-end; gap: 8px; 
       opacity: 0; 
-      transform: translateX(40px); /* 初始位置偏右 */
+      transform: translateX(40px); /* 侧滑初始位置 */
       transition: 0.6s var(--ease); pointer-events: none; z-index: 1001; 
     }
     body.is-bottom .contact-panel { 
       opacity: 1; 
-      transform: translateX(0); /* 滑回正常位置 */
+      transform: translateX(0); /* 侧滑归位 */
       pointer-events: auto; 
     }
     
@@ -190,7 +200,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     @keyframes unblur { to { filter: blur(0); } }
     @keyframes fadeIn { to { opacity: 1; } }
     @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
-    @keyframes navStagger { to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
@@ -238,11 +247,29 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
   </div>
 
   <script is:inline>
+    // ✨ 核心优化：利用 IntersectionObserver 实现随滚动逐个揭示
     const items = document.querySelectorAll('.nav-item');
-    items.forEach((item, index) => {
-      item.style.animation = `navStagger 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${0.5 + index * 0.1}s forwards`;
+    
+    const observer = new IntersectionObserver((entries) => {
+      // 筛选出当前进入视野的元素
+      const visibleEntries = entries.filter(entry => entry.isIntersecting);
+      
+      visibleEntries.forEach((entry, index) => {
+        // 如果多个元素同时进入视野（比如刚打开网页时），利用 index 制造错落有致的阶梯感
+        setTimeout(() => {
+          entry.target.classList.add('show');
+        }, index * 100);
+        // 动画只需执行一次，触发后就取消观察，提升性能
+        observer.unobserve(entry.target);
+      });
+    }, {
+      threshold: 0.1, // 元素露出 10% 就算进入视野
+      rootMargin: "0px 0px -50px 0px" // 在元素离屏幕底部还有 50px 时提前触发，更加自然
     });
 
+    items.forEach(item => observer.observe(item));
+
+    // 播放器逻辑
     const audio = document.getElementById('mainAudio');
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
@@ -261,6 +288,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       }
     };
 
+    // 底部邮箱面板显示逻辑
     window.onscroll = () => {
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 120;
       document.body.classList.toggle('is-bottom', isBottom);
