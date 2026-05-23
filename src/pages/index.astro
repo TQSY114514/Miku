@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 极致纯净无障碍完全体 (滚动揭示版)
+// TQSY's Space - 极致纯净无障碍完全体 (严格依次滑出版)
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
 // 全局统一图标与分享封面直链
@@ -85,7 +85,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
 
     .container { max-width: 500px; margin: 0 auto; padding: 0 20px 250px 20px; }
     
-    /* ✨ 核心优化：导航项的基础状态变为透明+下沉 */
     .nav-item { 
       display: flex; 
       align-items: center; 
@@ -112,7 +111,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       transform: translateY(0);
     }
     
-    /* 悬停效果 (仅在元素显示后生效) */
     .nav-item.show:hover { 
       transform: translateY(-4px); 
       border-color: var(--miku-green);
@@ -247,24 +245,34 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
   </div>
 
   <script is:inline>
-    // ✨ 核心优化：利用 IntersectionObserver 实现随滚动逐个揭示
+    // ✨ 核心优化：加入了动态延迟队列 (Stagger Queue)，强制卡片严格排队依次出现
     const items = document.querySelectorAll('.nav-item');
-    
+    let staggerDelay = 0;
+    let resetTimer = null;
+
     const observer = new IntersectionObserver((entries) => {
-      // 筛选出当前进入视野的元素
-      const visibleEntries = entries.filter(entry => entry.isIntersecting);
-      
-      visibleEntries.forEach((entry, index) => {
-        // 如果多个元素同时进入视野（比如刚打开网页时），利用 index 制造错落有致的阶梯感
-        setTimeout(() => {
-          entry.target.classList.add('show');
-        }, index * 100);
-        // 动画只需执行一次，触发后就取消观察，提升性能
-        observer.unobserve(entry.target);
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // 强制排队：每一个进入视野的元素，都比前一个多等 150 毫秒
+          setTimeout(() => {
+            entry.target.classList.add('show');
+          }, staggerDelay);
+          
+          staggerDelay += 150; 
+          
+          // 如果滚动停止了一小会儿，重置延迟，避免下次滚动等太久
+          clearTimeout(resetTimer);
+          resetTimer = setTimeout(() => {
+            staggerDelay = 0;
+          }, 300);
+          
+          // 动画只需执行一次
+          observer.unobserve(entry.target);
+        }
       });
     }, {
-      threshold: 0.1, // 元素露出 10% 就算进入视野
-      rootMargin: "0px 0px -50px 0px" // 在元素离屏幕底部还有 50px 时提前触发，更加自然
+      threshold: 0.1, 
+      rootMargin: "0px 0px -20px 0px"
     });
 
     items.forEach(item => observer.observe(item));
