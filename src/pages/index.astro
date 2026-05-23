@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 极致纯净终极完全体
+// TQSY's Space - 极致纯净无障碍完全体
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
 // 全局统一图标与分享封面直链
@@ -35,10 +35,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       --ease: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* 基础重置 */
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-    
-    /* 隐藏滚动条 */
     ::-webkit-scrollbar { width: 0px; height: 0px; }
 
     body { 
@@ -58,7 +55,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       z-index: -1; 
     }
 
-    /* Hero 部分 */
     .hero { 
       height: 100vh; 
       display: flex; 
@@ -87,7 +83,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       animation: fadeIn 1s var(--ease) 0.8s forwards;
     }
 
-    /* 导航列表 - 极致纯净态 */
     .container { max-width: 500px; margin: 0 auto; padding: 0 20px 250px 20px; }
     .nav-item { 
       display: flex; 
@@ -106,23 +101,15 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       opacity: 0;
       transform: translateY(20px);
     }
-    .nav-item span {
-      transition: color 0.4s var(--ease);
-    }
+    .nav-item span { transition: color 0.4s var(--ease); }
     .nav-item:hover { 
       transform: translateY(-4px); 
       border-color: var(--miku-green);
       box-shadow: 0 10px 30px rgba(0,207,181,0.1);
     }
-    .nav-item:hover span {
-      color: var(--miku-green);
-    }
-    .nav-item:active {
-      transform: scale(0.97);
-      background: rgba(0, 207, 181, 0.05);
-    }
+    .nav-item:hover span { color: var(--miku-green); }
+    .nav-item:active { transform: scale(0.97); background: rgba(0, 207, 181, 0.05); }
 
-    /* 播放器卡片 */
     .player-card { 
       position: fixed; 
       left: 25px; bottom: 25px; 
@@ -155,7 +142,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     }
     .play-pause:active { transform: scale(0.85); }
 
-    /* 联系面板 */
     .contact-panel { 
       position: fixed; right: 25px; bottom: 25px; 
       display: flex; flex-direction: column; 
@@ -172,7 +158,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     }
     .email-chip:hover { background: var(--miku-green); color: white; transform: translateX(-5px); }
 
-    /* 📱 移动端适配 */
     @media (max-width: 600px) {
       .player-card { 
         width: 175px !important; 
@@ -193,7 +178,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       .hero h1 { font-size: 3.2rem !important; }
     }
 
-    /* 动画 */
     @keyframes fadeInBody { to { opacity: 1; } }
     @keyframes heroUp { from { transform: translateY(30px); } to { transform: translateY(0); } }
     @keyframes unblur { to { filter: blur(0); } }
@@ -233,7 +217,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       <div class="song-name">橙交差点</div>
       <div class="song-artist">初音ミク</div>
     </div>
-    <button class="play-pause" id="playBtn">▶</button>
+    <button class="play-pause" id="playBtn" aria-label="播放或暂停背景音乐">▶</button>
     <audio id="mainAudio" loop preload="metadata">
       <source src="https://videotourl.com/audio/1775904309738-ed28bd2b-7261-4bb9-8cab-1ed6c1b5b0c9.mp3" type="audio/mpeg">
     </audio>
