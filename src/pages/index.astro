@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 100.01% 究极封神版 (滚动进度物理绑定版)
+// TQSY's Space - 100.01% 究极封神版 (含极客专属开源页脚)
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
 const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cfa-843a-e8ba865c9b46.webp";
@@ -121,6 +121,27 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     .nav-item.show:hover span { color: var(--miku-green); }
     .nav-item.show:active { transform: scale(0.97); background: var(--glass-hover); }
 
+    /* ✨ 新增：极简开源页脚样式 */
+    .source-footer {
+      text-align: center;
+      margin-top: 50px;
+      opacity: 0;
+      animation: fadeIn 1.5s var(--ease) 1s forwards;
+    }
+    .source-footer a {
+      font-size: 11px;
+      color: var(--text-gray);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.3s var(--ease);
+      user-select: none; -webkit-user-select: none;
+      opacity: 0.6;
+    }
+    .source-footer a:hover {
+      color: var(--miku-green);
+      opacity: 1;
+    }
+
     .player-card { 
       position: fixed; left: 25px; bottom: 25px; width: 300px; padding: 12px; 
       background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
@@ -155,7 +176,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     }
     body.is-bottom .contact-panel { pointer-events: auto; }
 
-    /* ✨ 核心重构：利用 CSS 变量承接 JS 的物理滚动值 */
     .email-chip { 
       --chip-x: 40px;
       --chip-op: 0;
@@ -166,14 +186,12 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       transform: translateX(var(--chip-x));
       opacity: var(--chip-op);
       
-      /* ✨ 抽离 transform 和 opacity 的 transition，让位给绝对无延迟的滚动计算 */
       transition: background 0.3s, color 0.3s, border 0.3s;
       will-change: transform, opacity;
       user-select: none; -webkit-user-select: none;
     }
     .email-chip:hover { 
       background: var(--miku-green); color: white; border-color: var(--miku-green); 
-      /* 在 JS 计算出的当前位置基础上，再减去 5px 形成物理回弹 */
       transform: translateX(calc(var(--chip-x) - 5px)); 
     }
 
@@ -230,6 +248,12 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       <a href="https://www.ioicode.com/user/54562" target="_blank" rel="noopener noreferrer" class="nav-item"><span>IOI Code</span> <span>→</span></a>
       <a href="https://www.nuomill.com/user/2649" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Nuomill</span> <span>→</span></a>
     </div>
+
+    <div class="source-footer">
+      <a href="https://github.com/TQSY114514/tqsy114514" target="_blank" rel="noopener noreferrer">
+        View Source Code ↗
+      </a>
+    </div>
   </div>
 
   <div class="player-card" id="playerCard">
@@ -265,7 +289,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
-    // 静止态检测逻辑
     let idleTimer;
     const resetIdleTimer = () => {
       document.body.classList.remove('is-idle');
@@ -279,7 +302,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     );
     resetIdleTimer();
 
-    // 瀑布流揭示逻辑
     const items = document.querySelectorAll('.nav-item');
     const itemsArray = Array.from(items); 
     let staggerDelay = 0;
@@ -304,7 +326,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     }, { threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
     items.forEach(item => observer.observe(item));
 
-    // 播放器逻辑
     const audio = document.getElementById('mainAudio');
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
@@ -319,13 +340,11 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       }
     };
 
-    // ✨ 核心重构：滚动物理绑定逻辑 (Scrubbing)
     const emailChips = document.querySelectorAll('.email-chip');
     
     const updateScrollProgress = () => {
       const maxScroll = document.body.offsetHeight - window.innerHeight;
       
-      // 如果屏幕高度过大无需滚动，则直接呈现完整状态
       if (maxScroll <= 0) {
         emailChips.forEach(chip => {
           chip.style.setProperty('--chip-x', '0px');
@@ -335,12 +354,10 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
         return;
       }
 
-      // 设定在最后 250px 距离时开始滑动动画
       const triggerZone = 250;
       const startScroll = maxScroll - triggerZone;
       const currentScroll = window.scrollY;
 
-      // 计算整体滚动进度 (0 到 1)
       let progress = 0;
       if (currentScroll >= startScroll) {
         progress = (currentScroll - startScroll) / triggerZone;
@@ -356,27 +373,22 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
           return;
         }
 
-        // 利用错位延迟，实现“依次展开”的阶梯感
         const stagger = 0.15;
         const delay = index * stagger;
         
-        // 重新映射每个卡片的局部进度
         let chipProgress = Math.max(0, progress - delay) / (1 - stagger * 3);
         chipProgress = Math.max(0, Math.min(1, chipProgress));
 
-        // 物理缓动曲线 (Ease Out)，让划动时的阻尼感更高级
         const easeOut = 1 - Math.pow(1 - chipProgress, 2);
 
-        // 注入实时物理参数给 CSS 变量
         chip.style.setProperty('--chip-x', `${40 * (1 - easeOut)}px`);
         chip.style.setProperty('--chip-op', easeOut);
       });
     };
 
-    // 绑定高性能滚动监听
     window.addEventListener('scroll', updateScrollProgress, { passive: true });
     window.addEventListener('resize', updateScrollProgress, { passive: true });
-    updateScrollProgress(); // 初始化计算
+    updateScrollProgress(); 
 
   </script>
 </body>
