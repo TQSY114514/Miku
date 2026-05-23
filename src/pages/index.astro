@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - Cyber Digital Identity 版 (分区重构 + 性能瘦身)
+// TQSY's Space - Cyber Digital Identity 终极完美版
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
 const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cfa-843a-e8ba865c9b46.webp";
@@ -62,7 +62,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       background-color: var(--bg-white); color: var(--text-dark); 
       font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "SF Pro Text", sans-serif; 
       overflow-x: hidden;
-      /* ⚡ 修复首屏白闪：移除 body opacity 动画 */
       transition: background-color 0.5s var(--ease), color 0.5s var(--ease);
     }
 
@@ -71,7 +70,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       background: radial-gradient(circle at 80% 20%, rgba(0, 207, 181, 0.1) 0%, transparent 40%); 
       z-index: -1; pointer-events: none;
       transition: transform 3s var(--ease), opacity 3s var(--ease);
-      /* ⚡ 性能优化：移除不必要的 will-change */
     }
 
     @keyframes ambientBreathe {
@@ -103,7 +101,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
 
     .container { max-width: 500px; margin: 0 auto; padding: 0 20px 250px 20px; }
     
-    /* ✨ 新增：分类标题样式，构建信息层级 */
     .category-title {
       font-size: 11px;
       font-weight: 700;
@@ -118,13 +115,11 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
 
     .nav-item { 
       display: flex; align-items: center; justify-content: space-between; 
-      /* ⚡ GPU减负：统一降级到 blur(12px) */
       padding: 22px 28px; background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--glass-border); border-radius: 24px; text-decoration: none; 
       color: var(--text-dark); font-weight: 600; margin-bottom: 16px; 
       opacity: 0; transform: translateY(30px);
       transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), background-color 0.5s var(--ease);
-      /* ⚡ 性能优化：仅保留高频动画元素的 will-change */
       will-change: transform, opacity;
       user-select: none; -webkit-user-select: none;
     }
@@ -149,7 +144,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
 
     .player-card { 
       position: fixed; left: 25px; bottom: 25px; width: 300px; padding: 12px; 
-      /* ⚡ GPU减负：降级到 blur(12px) */
       background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       border-radius: 20px; border: 1px solid rgba(0,207,181,0.2); 
       display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
@@ -186,11 +180,9 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     .email-chip { 
       --chip-x: 40px;
       --chip-op: 0;
-      /* ⚡ GPU减负：降级到 blur(12px) */
       background: var(--glass); padding: 8px 16px; border-radius: 50px; font-size: 10px; 
       color: var(--text-gray); border: 1px solid var(--glass-border); text-decoration: none; font-family: monospace; 
       backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      
       transform: translateX(var(--chip-x)); opacity: var(--chip-op);
       transition: background 0.3s, color 0.3s, border 0.3s;
       user-select: none; -webkit-user-select: none;
@@ -313,7 +305,6 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     );
     resetIdleTimer();
 
-    // ✨ 修复：连同新增加的分类标题一起纳入排队动画队列
     const items = document.querySelectorAll('.nav-item, .category-title');
     const itemsArray = Array.from(items); 
     let staggerDelay = 0;
