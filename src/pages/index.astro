@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - 100.01% 究极封神版 (彻底消灭 Emoji，原生 SVG 图标替换)
+// TQSY's Space - 100.01% 究极封神版 (纯CSS驱动SVG图标修复版)
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
 const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cfa-843a-e8ba865c9b46.webp";
@@ -144,11 +144,11 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     }
     .play-pause:active { transform: scale(0.85); }
     
-    /* ✨ 确保 SVG 完美居中并跟随按钮文字颜色 (currentColor) */
-    .play-pause svg {
-      width: 14px; height: 14px;
-      fill: currentColor;
-    }
+    /* ✨ 核心修复：纯 CSS 控制 SVG 状态，不依赖 JS 字符串 */
+    .play-pause svg { width: 14px; height: 14px; fill: currentColor; }
+    #icon-pause { display: none; }
+    .is-playing #icon-play { display: none; }
+    .is-playing #icon-pause { display: block; }
 
     .contact-panel { 
       position: fixed; right: 25px; bottom: 25px; display: flex; flex-direction: column; 
@@ -231,9 +231,12 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       <div class="song-name">橙交差点</div>
       <div class="song-artist">初音ミク</div>
     </div>
+    
     <button class="play-pause" id="playBtn" aria-label="播放或暂停背景音乐">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="margin-left: 2px;"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="icon-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="margin-left: 2px;"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="icon-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
     </button>
+    
     <audio id="mainAudio" loop preload="metadata">
       <source src="https://videotourl.com/audio/1775904309738-ed28bd2b-7261-4bb9-8cab-1ed6c1b5b0c9.mp3" type="audio/mpeg">
     </audio>
@@ -303,20 +306,15 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
 
-    // ✨ 核心替换：定义 SVG 字符串常量
-    const playSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="margin-left: 2px;"><path d="M8 5v14l11-7z"/></svg>`;
-    const pauseSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-
+    // ✨ JS 被极限简化，现在只需控制父级的 is-playing 类名即可
     playBtn.onclick = (e) => {
       e.stopPropagation();
       if (audio.paused) {
         audio.play().then(() => {
-          playBtn.innerHTML = pauseSVG;
           playerCard.classList.add('is-playing');
         });
       } else {
         audio.pause();
-        playBtn.innerHTML = playSVG;
         playerCard.classList.remove('is-playing');
       }
     };
