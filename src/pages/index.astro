@@ -1,8 +1,7 @@
 ---
-// TQSY's Space - 极致纯净无障碍完全体 (严格依次滑出版)
+// TQSY's Space - 极致纯净无障碍完全体 (邮箱阶梯侧滑版)
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
-// 全局统一图标与分享封面直链
 const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cfa-843a-e8ba865c9b46.webp";
 ---
 
@@ -13,9 +12,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
   <title>{title}</title>
   
   <meta name="theme-color" content="#fcfcfc" />
-  
   <link rel="icon" href={globalIcon} />
-  
   <link rel="apple-touch-icon" href={globalIcon} />
 
   <meta name="description" content={description} />
@@ -98,19 +95,12 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       color: var(--text-dark); 
       font-weight: 600; 
       margin-bottom: 16px; 
-      /* 初始状态：隐藏并下移 */
       opacity: 0;
       transform: translateY(30px);
       transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
     }
     .nav-item span { transition: color 0.4s var(--ease); }
-    
-    /* 当 JS 监听到滚动，赋予 .show 类名时，元素浮现 */
-    .nav-item.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
+    .nav-item.show { opacity: 1; transform: translateY(0); }
     .nav-item.show:hover { 
       transform: translateY(-4px); 
       border-color: var(--miku-green);
@@ -151,27 +141,45 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     }
     .play-pause:active { transform: scale(0.85); }
 
+    /* ✨ 邮箱容器，固定在右下角，但不做动画 */
     .contact-panel { 
       position: fixed; right: 25px; bottom: 25px; 
       display: flex; flex-direction: column; 
       align-items: flex-end; gap: 8px; 
-      opacity: 0; 
-      transform: translateX(40px); /* 侧滑初始位置 */
-      transition: 0.6s var(--ease); pointer-events: none; z-index: 1001; 
-    }
-    body.is-bottom .contact-panel { 
-      opacity: 1; 
-      transform: translateX(0); /* 侧滑归位 */
-      pointer-events: auto; 
+      z-index: 1001; 
+      pointer-events: none; /* 默认不可点击，防止遮挡底层元素 */
     }
     
+    body.is-bottom .contact-panel {
+      pointer-events: auto; /* 滑到底部时恢复点击 */
+    }
+
+    /* ✨ 每个具体的邮箱标签：默认向右偏移 40px 并透明 */
     .email-chip { 
       background: white; padding: 8px 16px; 
       border-radius: 50px; font-size: 10px; 
       color: var(--text-gray); border: 1px solid #eee; 
-      text-decoration: none; transition: 0.3s; font-family: monospace; 
+      text-decoration: none; font-family: monospace; 
+      
+      opacity: 0;
+      transform: translateX(40px);
+      /* transition 里设置好了缓动函数，但具体的延迟时间在 JS 里动态赋予 */
+      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), background 0.3s, color 0.3s, border 0.3s;
     }
-    .email-chip:hover { background: var(--miku-green); color: white; transform: translateX(-5px); }
+    
+    /* 当 body 拥有 is-bottom 类名时，触发邮箱标签的显示 */
+    body.is-bottom .email-chip {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    /* 悬停时的微妙左移与变色效果，增加交互感 */
+    body.is-bottom .email-chip:hover { 
+      background: var(--miku-green); 
+      color: white; 
+      border-color: var(--miku-green);
+      transform: translateX(-5px); 
+    }
 
     @media (max-width: 600px) {
       .player-card { 
@@ -184,11 +192,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       .album-cover { width: 35px !important; height: 35px !important; }
       .song-name { font-size: 10.5px !important; }
       .play-pause { width: 28px !important; height: 28px !important; font-size: 10px !important; }
-      .contact-panel { 
-        right: 10px !important; 
-        bottom: 10px !important; 
-        gap: 4px !important;
-      }
+      .contact-panel { right: 10px !important; bottom: 10px !important; gap: 4px !important; }
       .email-chip { padding: 5px 10px !important; font-size: 8.5px !important; }
       .hero h1 { font-size: 3.2rem !important; }
     }
@@ -237,7 +241,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     </audio>
   </div>
 
-  <div class="contact-panel">
+  <div class="contact-panel" id="contactPanel">
     <a href="mailto:tqishengyan@gmail.com" class="email-chip">tqishengyan@gmail.com</a>
     <a href="mailto:3635316905@qq.com" class="email-chip">3635316905@qq.com</a>
     <a href="mailto:tianqishengyan_zhj@163.com" class="email-chip">tianqishengyan_zhj@163.com</a>
@@ -245,7 +249,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
   </div>
 
   <script is:inline>
-    // ✨ 核心优化：加入了动态延迟队列 (Stagger Queue)，强制卡片严格排队依次出现
+    // 社交列表的滚动揭示
     const items = document.querySelectorAll('.nav-item');
     let staggerDelay = 0;
     let resetTimer = null;
@@ -253,31 +257,18 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          // 强制排队：每一个进入视野的元素，都比前一个多等 150 毫秒
-          setTimeout(() => {
-            entry.target.classList.add('show');
-          }, staggerDelay);
-          
+          setTimeout(() => { entry.target.classList.add('show'); }, staggerDelay);
           staggerDelay += 150; 
-          
-          // 如果滚动停止了一小会儿，重置延迟，避免下次滚动等太久
           clearTimeout(resetTimer);
-          resetTimer = setTimeout(() => {
-            staggerDelay = 0;
-          }, 300);
-          
-          // 动画只需执行一次
+          resetTimer = setTimeout(() => { staggerDelay = 0; }, 300);
           observer.unobserve(entry.target);
         }
       });
-    }, {
-      threshold: 0.1, 
-      rootMargin: "0px 0px -20px 0px"
-    });
+    }, { threshold: 0.1, rootMargin: "0px 0px -20px 0px" });
 
     items.forEach(item => observer.observe(item));
 
-    // 播放器逻辑
+    // 播放器控制
     const audio = document.getElementById('mainAudio');
     const playBtn = document.getElementById('playBtn');
     const playerCard = document.getElementById('playerCard');
@@ -296,8 +287,15 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       }
     };
 
-    // 底部邮箱面板显示逻辑
+    // ✨ 邮箱侧滑的阶梯延迟逻辑
+    const emailChips = document.querySelectorAll('.email-chip');
+    // 给每一个邮箱计算出一个延迟时间 (0s, 0.1s, 0.2s, 0.3s)
+    emailChips.forEach((chip, index) => {
+      chip.style.transitionDelay = `${index * 0.1}s`;
+    });
+
     window.onscroll = () => {
+      // 当距离底部还有 120px 时触发
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 120;
       document.body.classList.toggle('is-bottom', isBottom);
     };
