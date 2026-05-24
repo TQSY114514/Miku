@@ -1,5 +1,5 @@
 ---
-// TQSY's Space - Cyber Digital Identity 终极完美版
+// TQSY's Space - Cyber Digital Identity 满分工程规范终结版 (含 Pixiv 灵魂注入)
 const title = "TQSY's Space";
 const description = "Welcome to Weather Holy Salt · TQSY's personal space 🪐";
 const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cfa-843a-e8ba865c9b46.webp";
@@ -8,7 +8,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{title}</title>
   
   <link rel="preconnect" href="https://cdn.phototourl.com" crossorigin />
@@ -78,9 +78,10 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     }
     body.is-idle .bg-glow { animation: ambientBreathe 8s infinite ease-in-out; }
 
-    .nav-list { transition: opacity 1.5s ease-in-out, filter 1.5s ease-in-out; }
-    body.is-idle .nav-list { opacity: 0.35; filter: blur(1.5px); }
-    body.is-idle .nav-list:hover { opacity: 1; filter: blur(0); }
+    @media (hover: hover) {
+      body.is-idle .nav-list:hover .nav-item { opacity: 1; filter: blur(0); }
+      body.is-idle .nav-list:hover .category-title { opacity: 0.8; }
+    }
 
     .hero { 
       height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; 
@@ -102,16 +103,13 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     .container { max-width: 500px; margin: 0 auto; padding: 0 20px 250px 20px; }
     
     .category-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-gray);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
+      font-size: 11px; font-weight: 700; color: var(--text-gray); letter-spacing: 0.25em; text-transform: uppercase;
       margin: 40px 0 16px 12px;
       opacity: 0; transform: translateY(20px);
-      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), opacity 1.5s ease-in-out;
     }
     .category-title.show { opacity: 0.8; transform: translateY(0); }
+    body.is-idle .category-title { opacity: 0.3; }
 
     .nav-item { 
       display: flex; align-items: center; justify-content: space-between; 
@@ -119,17 +117,22 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       border: 1px solid var(--glass-border); border-radius: 24px; text-decoration: none; 
       color: var(--text-dark); font-weight: 600; margin-bottom: 16px; 
       opacity: 0; transform: translateY(30px);
-      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), background-color 0.5s var(--ease);
+      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), border-color 0.4s var(--ease), box-shadow 0.4s var(--ease), background-color 0.5s var(--ease), filter 1.5s ease-in-out;
       will-change: transform, opacity;
       user-select: none; -webkit-user-select: none;
     }
     .nav-item span { transition: color 0.4s var(--ease); }
     .nav-item.show { opacity: 1; transform: translateY(0); }
-    .nav-item.show:hover { 
-      transform: translateY(-4px); border-color: var(--miku-green); box-shadow: 0 10px 30px rgba(0,207,181,0.1);
+    
+    @media (hover: hover) {
+      .nav-item.show:hover { 
+        transform: translateY(-4px); border-color: var(--miku-green); box-shadow: 0 10px 30px rgba(0,207,181,0.1);
+      }
+      .nav-item.show:hover span { color: var(--miku-green); }
     }
-    .nav-item.show:hover span { color: var(--miku-green); }
-    .nav-item.show:active { transform: scale(0.97); background: var(--glass-hover); }
+    .nav-item.show:active { transform: scale(0.97); background: var(--glass-hover); transition: transform 0.1s, background 0.1s; }
+    
+    body.is-idle .nav-item { opacity: 0.35; filter: blur(2px); }
 
     .source-footer {
       text-align: center; margin-top: 60px; opacity: 0; animation: fadeIn 1.5s var(--ease) 1s forwards;
@@ -140,7 +143,9 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       transition: color 0.3s var(--ease), opacity 0.3s var(--ease);
       user-select: none; -webkit-user-select: none; opacity: 0.6;
     }
-    .source-footer a:hover { color: var(--miku-green); opacity: 1; }
+    @media (hover: hover) {
+      .source-footer a:hover { color: var(--miku-green); opacity: 1; }
+    }
 
     .player-card { 
       position: fixed; left: 25px; bottom: 25px; width: 300px; padding: 12px; 
@@ -164,7 +169,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: 0.3s;
     }
-    .play-pause:active { transform: scale(0.85); }
+    .play-pause:active { transform: scale(0.85); transition: transform 0.1s; }
     
     .play-pause svg { width: 14px; height: 14px; fill: currentColor; }
     #icon-pause { display: none; }
@@ -178,8 +183,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     body.is-bottom .contact-panel { pointer-events: auto; }
 
     .email-chip { 
-      --chip-x: 40px;
-      --chip-op: 0;
+      --chip-x: 40px; --chip-op: 0;
       background: var(--glass); padding: 8px 16px; border-radius: 50px; font-size: 10px; 
       color: var(--text-gray); border: 1px solid var(--glass-border); text-decoration: none; font-family: monospace; 
       backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -187,9 +191,11 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       transition: background 0.3s, color 0.3s, border 0.3s;
       user-select: none; -webkit-user-select: none;
     }
-    .email-chip:hover { 
-      background: var(--miku-green); color: white; border-color: var(--miku-green); 
-      transform: translateX(calc(var(--chip-x) - 5px)); 
+    @media (hover: hover) {
+      .email-chip:hover { 
+        background: var(--miku-green); color: white; border-color: var(--miku-green); 
+        transform: translateX(calc(var(--chip-x) - 5px)); 
+      }
     }
 
     @media (max-width: 600px) {
@@ -212,7 +218,7 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
         animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important; scroll-behavior: auto !important;
       }
-      .nav-item, .category-title { opacity: 1; transform: translateY(0); }
+      .nav-item, .category-title { opacity: 1; transform: translateY(0); filter: none !important; }
       .email-chip { opacity: 1; transform: translateX(0) !important; }
       body.is-idle .bg-glow { animation: none !important; } 
     }
@@ -227,8 +233,8 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     <p class="hero-sub">Weather Holy Salt · TQSY</p>
   </section>
 
-  <div class="container">
-    <div class="nav-list" id="navList">
+  <main class="container">
+    <nav class="nav-list" id="navList" aria-label="个人主页导航矩阵">
       
       <div class="category-title">💻 Code & Dev</div>
       <a href="https://github.com/TQSY114514" target="_blank" rel="noopener noreferrer" class="nav-item"><span>GitHub</span> <span>→</span></a>
@@ -243,25 +249,26 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
       
       <div class="category-title">🌸 Social & ACG</div>
       <a href="https://bangumi.tv/user/tqsy114514" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Bangumi</span> <span>→</span></a>
+      <a href="https://www.pixiv.net/users/118448914" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Pixiv</span> <span>→</span></a>
       <a href="https://space.bilibili.com/1180124107" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Bilibili</span> <span>→</span></a>
       <a href="https://x.com/TianY43737" target="_blank" rel="noopener noreferrer" class="nav-item"><span>X (Twitter)</span> <span>→</span></a>
       <a href="https://www.instagram.com/tqsy114514/" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Instagram</span> <span>→</span></a>
       <a href="https://www.touchgal.ink/user/383045/comment" target="_blank" rel="noopener noreferrer" class="nav-item"><span>TouchGal</span> <span>→</span></a>
       <a href="https://www.facebook.com/profile.php?id=61577768467133" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Facebook</span> <span>→</span></a>
       <a href="https://www.nuomill.com/user/2649" target="_blank" rel="noopener noreferrer" class="nav-item"><span>Nuomill</span> <span>→</span></a>
-    </div>
+    </nav>
 
-    <div class="source-footer">
+    <footer class="source-footer">
       <a href="https://github.com/TQSY114514/tqsy114514" target="_blank" rel="noopener noreferrer">
         <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">
           <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
         </svg>
         <span>Open-source on GitHub</span>
       </a>
-    </div>
-  </div>
+    </footer>
+  </main>
 
-  <div class="player-card" id="playerCard">
+  <aside class="player-card" id="playerCard" aria-label="背景音乐播放器">
     <img src="https://cdn.phototourl.com/free/2026-04-11-eee19110-0750-4557-be87-830a17b948b5.jpg" class="album-cover" alt="Miku Cover" width="50" height="50" decoding="async">
     <div class="song-info">
       <div class="song-name">橙交差点</div>
@@ -274,14 +281,14 @@ const globalIcon = "https://cdn.phototourl.com/free/2026-05-22-13e55726-5b80-4cf
     <audio id="mainAudio" loop preload="metadata">
       <source src="https://videotourl.com/audio/1775904309738-ed28bd2b-7261-4bb9-8cab-1ed6c1b5b0c9.mp3" type="audio/mpeg">
     </audio>
-  </div>
+  </aside>
 
-  <div class="contact-panel" id="contactPanel">
+  <address class="contact-panel" id="contactPanel">
     <a href="mailto:tqishengyan@gmail.com" class="email-chip">tqishengyan@gmail.com</a>
     <a href="mailto:3635316905@qq.com" class="email-chip">3635316905@qq.com</a>
     <a href="mailto:tianqishengyan_zhj@163.com" class="email-chip">tianqishengyan_zhj@163.com</a>
     <a href="mailto:tianqishengyan_zhj@outlook.com" class="email-chip">tianqishengyan_zhj@outlook.com</a>
-  </div>
+  </address>
 
   <script is:inline>
     console.log(
